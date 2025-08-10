@@ -37,14 +37,11 @@ export default function NavBar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <a
-              href="#locations"
-              className="hidden sm:inline-block rounded-xl border border-white/40 bg-white/50 px-4 py-2 text-sm font-medium text-slate-700 backdrop-blur hover:bg-white"
-            >
-              Locations
-            </a>
-            <Button as="a" href="#order" className="text-sm">
-              Order now
+            <Button as="a" href="/sign-in" className="text-sm bg-emerald-600/70 text-slate-800 hover:bg-emerald-600">
+              Login
+            </Button>
+            <Button as="a" href="/register" className="text-sm bg-emerald-500 text-white hover:bg-emerald-600">
+              Sign Up
             </Button>
           </div>
         </div>
