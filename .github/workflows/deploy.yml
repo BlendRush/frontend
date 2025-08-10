@@ -26,7 +26,7 @@ jobs:
         host: ${{ secrets.FRONTEND_EC2_IP }}
         username: ubuntu
         key: ${{ secrets.FRONTEND_EC2_SSH_KEY }}
-        source: "Dockerfile"
+        source: "./"
         target: "/home/ubuntu/frontend"
 
     - name: Deploy on EC2 via SSH
