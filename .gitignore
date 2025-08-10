@@ -21,3 +21,14 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+
+.terraform/
+node_modules/
+*.tfstate
+*.tfstate.*
+.terraform.tfstate
+crash.log
+*.backup
+*.log
+.env
