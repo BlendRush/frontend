@@ -66,7 +66,7 @@ export default function Register() {
       {/* CARD — centered, then nudged DOWN to sit inside the monitor */}
       <div
         className="
-          bg-white/95 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
+          bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
           p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[460px]
           
         "
@@ -167,9 +167,9 @@ export default function Register() {
           </Form.Item>
         </Form>
 
-        <div className="text-center text-sm md:text-base text-slate-600">
+        <div className="text-center text-sm md:text-base text-slate-600 text-white" >
           Already have an account?{" "}
-          <Link to="/sign-in" className="text-emerald-600 hover:underline">
+          <Link to="/sign-in" className="text- white-600 hover:underline">
             Sign In
           </Link>
         </div>
@@ -200,7 +200,7 @@ export default function Register() {
             lineHeight: "1.6",
           }}
         >
-          <p style={{ fontWeight: "bold" }}>Terms and Conditions</p>
+          <p style={{ color: "red", fontWeight: "bold" }}>Terms and Conditions</p>
           <p>…add your content…</p>
           <p style={{ fontWeight: "bold" }}>Privacy Policy</p>
           <p>…add your content…</p>
