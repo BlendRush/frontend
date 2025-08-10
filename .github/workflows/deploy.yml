@@ -19,6 +19,7 @@ jobs:
 
     - name: Build Docker image
       run: docker build -t frontend-app .
+      
     - name: Build Docker image
       working-directory: ./frontend
 
