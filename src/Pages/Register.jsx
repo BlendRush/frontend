@@ -145,7 +145,7 @@ export default function Register() {
               I agree to the{" "}
               <button
                 type="button"
-                className="text-emerald-600 underline"
+                className="text-white-600 underline"
                 onClick={() => setModalVisible(true)}
               >
                 Terms & Privacy Policy
@@ -158,7 +158,14 @@ export default function Register() {
               <Button
                 type="primary"
                 htmlType="submit"
-                className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                className="
+    !w-full md:!w-[300px] !h-[45px] !text-base md:!text-lg
+    !rounded-full !text-white !font-bold
+    !transition-all !duration-300 !ease-in-out
+    !bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D]
+    hover:!bg-gray-400 hover:from-transparent hover:via-transparent hover:to-transparent
+    border-0
+  "
                 loading={loading}
               >
                 Sign Up
@@ -167,7 +174,7 @@ export default function Register() {
           </Form.Item>
         </Form>
 
-        <div className="text-center text-sm md:text-base text-slate-600 text-white" >
+        <div className="text-center text-sm md:text-base text-white-800 " >
           Already have an account?{" "}
           <Link to="/sign-in" className="text- white-600 hover:underline">
             Sign In
@@ -200,10 +207,28 @@ export default function Register() {
             lineHeight: "1.6",
           }}
         >
-          <p style={{ color: "red", fontWeight: "bold" }}>Terms and Conditions</p>
-          <p>…add your content…</p>
-          <p style={{ fontWeight: "bold" }}>Privacy Policy</p>
-          <p>…add your content…</p>
+          <p style={{ color: "red", fontWeight: "bold" }}>🍹 Terms and Conditions</p>
+          <p>
+
+            Use our app to browse the menu, order drinks, and enjoy rewards.
+
+            Prices and offers may change.
+
+            Orders are confirmed after payment; contact us quickly for changes or cancellations.
+
+            Don’t misuse the app or our content.
+
+
+
+            You can update or delete your data anytime.</p>
+          <p style={{ fontWeight: "bold" }}>🔒 Privacy Policy</p>
+          <p> 
+
+            We collect your name, contact info, address, and order history to serve you better.
+
+            Your data is safe with us — we never sell it.
+
+            We share only with trusted partners (e.g., delivery, payment processing).</p>
           <p>
             <em>Scroll to the bottom to enable acceptance.</em>
           </p>

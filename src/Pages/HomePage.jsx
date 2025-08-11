@@ -10,7 +10,7 @@ export default function HomePage() {
 
       {/* Background section */}
       <div
-        className="relative mt-24 min-h-screen bg-cover bg-center flex items-center justify-start"
+        className="relative  min-h-screen bg-cover bg-center flex items-center justify-start"
         style={{ backgroundImage: `url(${homeBg})` }}
       >
         {/* Optional overlay */}

@@ -2,7 +2,7 @@ import React from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import HomePage from './Pages/HomePage.jsx';
 import SignIn from './Pages/SignIn';     // create stub if not exists
-import Register from './Pages/Register';  // create stub if not exists
+import Register from './Pages/Register.jsx';  // create stub if not exists
 import './index.css'; // Ensure you have your styles imported
 
 export default function App() {
