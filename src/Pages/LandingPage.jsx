@@ -16,27 +16,7 @@ export default function HomePage() {
         {/* Optional overlay */}
         <div className="absolute inset-0 bg-white/20" aria-hidden="true" />
 
-        {/* Content */}
-        <div className="relative max-w-xl z-10 text-left ml-32 -translate-y-20">
-          <h1
-            className="text-4xl md:text-5xl font-bold text-green-900 hover:animate-bounce hover:drop-shadow-[0_0_10px_#22c55e]"
-            style={{ fontFamily: "Merienda, cursive" }}
-          >
-            Welcome to blendRUSH
-          </h1>
-
-          <p
-            className="mt-4 text-green-800 text-lg"
-            style={{ fontFamily: "Merienda, cursive" }}
-          >
-            
-            BlendRush is your neighborhood juice bar for fresh, made-to-order 
-            blends. We press real fruit and veggies—no syrups, no fuss—so you 
-            get crisp flavors, clean energy, and feel-good sips every time. 
-            Grab a post-workout refuel, a midday pick-me-up, or a cleanse pack 
-            for the week. Fast service, recyclable cups, and a team that knows 
-            your go-to—because better choices should be easy and delicious.
-          </p>
+        
 
           {/* Order Now Button */}
           <button
