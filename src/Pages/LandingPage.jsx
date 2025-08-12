@@ -26,7 +26,7 @@ export default function HomePage() {
             Order Now
           </button>
         </div>
-      </div>
+      
     </>
   );
 }
