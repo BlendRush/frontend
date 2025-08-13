@@ -42,11 +42,11 @@ export default function SignIn() {
       {/* CARD */}
       <div
         className="
-          bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
+          bg-white/0 rounded-2xl -mt-18 shadow-xl ring-1 ring-black/5 backdrop-blur
           p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[auto]
         "
       >
-        <div className="flex flex-col mt-12 items-center w-full gap-10">
+        <div className="flex flex-col -mt-6 items-center w-full -mb-8 gap-10">
           <Text
             className="text-black text-3xl font-extrabold"
             style={{ fontFamily: "Merienda, cursive" }}
@@ -138,7 +138,7 @@ export default function SignIn() {
         <div className="flex justify-center mb-2">
           <Button
             type="default"
-            className="flex items-center gap-2 !px-5 !py-2 rounded-full"
+            className="flex items-center  gap-2 !px-5 !py-2 rounded-full"
             onClick={googleAuth}
           >
             <GoogleOutlined />
