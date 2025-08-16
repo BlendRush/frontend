@@ -105,7 +105,7 @@ export default function SignIn() {
             </Form.Item>
             <Text
               className="cursor-pointer text-sm hover:underline"
-              onClick={() => navigate("/forgot-password")}
+              onClick={() => navigate("/forgot-pw")}
             >
               Forgot Password?
             </Text>
