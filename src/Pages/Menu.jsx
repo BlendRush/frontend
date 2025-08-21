@@ -1,5 +1,9 @@
 import React, { useMemo, useState } from "react";
 import NavSearchBar from "../Component/N-SearchBar.js";
+import AvocadoImg from "../assets/Avacado_S.png";
+import BerryImg from "../assets/Berry_S.png";
+import PinappleSImg from "../assets/pineapple_s.png";
+
 
 // ---- Sample data -----------------------------------------------------------
 const CATEGORIES = [
@@ -13,36 +17,33 @@ const CATEGORIES = [
 const ITEMS = [
   {
     id: "s1",
-    name: "Tropical Sunrise",
+    name: "Green Glow Elixir",
     category: "Smoothies",
     price: 5.5,
     kcal: 230,
     tags: ["vegan", "no-added-sugar"],
-    image:
-      "https://images.unsplash.com/photo-1511920170033-f8396924c348?q=80&w=1200&auto=format&fit=crop",
-    ingredients: ["Mango", "Pineapple", "Banana", "Orange", "Coconut water"],
+    image: AvocadoImg,
+    ingredients: ["Spinach, Avocado, Kiwi, Coconut water, Honey"],
   },
   {
     id: "s2",
-    name: "Berry Boost",
+    name: "Berry Zen Fusion",
     category: "Smoothies",
     price: 6.0,
     kcal: 210,
     tags: ["vegan", "antioxidant"],
-    image:
-      "https://images.unsplash.com/photo-1526318472351-c75fcf070305?q=80&w=1200&auto=format&fit=crop",
+    image:BerryImg,
     ingredients: ["Blueberry", "Strawberry", "Raspberry", "Oat milk", "Chia"],
   },
   {
     id: "s3",
-    name: "Green Machine",
+    name: "Golden Sunrise Shake",
     category: "Smoothies",
     price: 6.5,
     kcal: 190,
     tags: ["vegan", "low-sugar"],
-    image:
-      "https://images.unsplash.com/photo-1548865167-2f1742aa0354?q=80&w=1200&auto=format&fit=crop",
-    ingredients: ["Kale", "Spinach", "Green apple", "Kiwi", "Lime", "Almonds"],
+    image:PinappleSImg,
+    ingredients: ["Mango, Pineapple, Banana, Turmeric, Oat milk"],
   },
   {
     id: "j1",
