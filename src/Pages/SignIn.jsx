@@ -29,21 +29,20 @@ export default function SignIn() {
     return Promise.resolve();
   };
 
-  // Change this to your backend auth route if needed
   const googleAuth = () => {
     window.open("http://localhost:8080/auth/google", "_self");
   };
 
   return (
     <div
-      className="relative min-h-screen bg-cover bg-center flex items-center justify-center"
+      className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
       style={{ backgroundImage: `url(${signupBg})` }}
     >
       {/* CARD */}
       <div
         className="
-          bg-white/0 rounded-2xl -mt-18 shadow-xl ring-1 ring-black/5 backdrop-blur
-          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[auto]
+          bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
+          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-24
         "
       >
         <div className="flex flex-col -mt-6 items-center w-full -mb-8 gap-10">
@@ -111,7 +110,7 @@ export default function SignIn() {
             </Text>
           </div>
 
-          {/* Submit */}
+          {/* Sign In */}
           <Form.Item className="mb-3">
             <div className="flex justify-center">
               <Button
@@ -131,20 +130,43 @@ export default function SignIn() {
               </Button>
             </div>
           </Form.Item>
-        </Form>
 
-        
-        {/* Google Sign-In */}
-        <div className="flex justify-center mb-2">
-          <Button
-            type="default"
-            className="flex items-center  gap-2 !px-5 !py-2 rounded-full"
-            onClick={googleAuth}
-          >
-            <GoogleOutlined />
-            Sign in with Google
-          </Button>
-        </div>
+          {/* Divider */}
+          <div className="flex items-center gap-3 my-3">
+            <div className="h-px flex-1 bg-gray-200" />
+            <span className="text-xs text-gray-500">or</span>
+            <div className="h-px flex-1 bg-gray-200" />
+          </div>
+
+          {/* Google Sign-In */}
+          <div className="flex justify-center">
+            <Button
+              type="default"
+              className="flex items-center gap-2 !px-5 !py-2 rounded-full"
+              onClick={googleAuth}
+            >
+              <GoogleOutlined />
+              Sign in with Google
+            </Button>
+          </div>
+        </Form>
+      </div>
+
+      {/* OUTSIDE the card: Sign Up CTA */}
+      <div className="mt-4 -mb-4 w-full flex justify-center">
+        <Button
+          type="default"
+          className="
+            !w-full md:!w-[300px] !h-[45px]
+            !rounded-full !font-bold
+            !text-emerald-700 !border-emerald-300
+            hover:!bg-emerald-50
+            bg-white/70 backdrop-blur-sm
+          "
+          onClick={() => navigate("/register")}
+        >
+          Create an account
+        </Button>
       </div>
     </div>
   );
