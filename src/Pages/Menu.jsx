@@ -1,5 +1,7 @@
 import React, { useMemo, useState } from "react";
 import NavSearchBar from "../Component/N-SearchBar.js";
+import { useCart } from "../Component/CartContext"; // <-- NEW
+
 import AvocadoImg from "../assets/Avacado_S.png";
 import BerryImg from "../assets/Berry_S.png";
 import PinappleSImg from "../assets/pineapple_s.png";
@@ -8,16 +10,11 @@ import BeetImg from "../assets/Beet_J.png";
 import AcaiImg from "../assets/Acai_B.png";
 import ChiaImg from "../assets/Chia_B.png";
 import GingerImg from "../assets/Ginger_S.png";
-import BannerImg from "../assets/Banner.png"; 
-import BgImg from "../assets/MBg.png"; 
+import BannerImg from "../assets/Banner.png";
+import BgImg from "../assets/MBg.png";
 
 // ---- Sample data -----------------------------------------------------------
-const CATEGORIES = [
-  "Smoothies",
-  "Fresh Juices",
-  "Bowls",
-  "Shots",
-];
+const CATEGORIES = ["Smoothies", "Fresh Juices", "Bowls", "Shots"];
 
 const ITEMS = [
   {
@@ -37,7 +34,7 @@ const ITEMS = [
     price: 6.0,
     kcal: 210,
     tags: ["vegan", "antioxidant"],
-    image:BerryImg,
+    image: BerryImg,
     ingredients: ["Blueberry", "Strawberry", "Raspberry", "Oat milk", "Chia"],
   },
   {
@@ -47,7 +44,7 @@ const ITEMS = [
     price: 6.5,
     kcal: 190,
     tags: ["vegan", "low-sugar"],
-    image:PinappleSImg,
+    image: PinappleSImg,
     ingredients: ["Mango, Pineapple, Banana, Turmeric, Oat milk"],
   },
   {
@@ -57,7 +54,7 @@ const ITEMS = [
     price: 4.0,
     kcal: 120,
     tags: ["vitamin-c"],
-    image:OrangeImg,
+    image: OrangeImg,
     ingredients: ["Fresh orange, Lemon, Ginger, Honey, Water"],
   },
   {
@@ -67,7 +64,7 @@ const ITEMS = [
     price: 4.5,
     kcal: 130,
     tags: ["vegan", "detox"],
-    image:BeetImg,
+    image: BeetImg,
     ingredients: ["Beetroot, Carrot, Apple, Lemon, Mint leaves"],
   },
   {
@@ -77,7 +74,7 @@ const ITEMS = [
     price: 7.5,
     kcal: 380,
     tags: ["vegan", "protein"],
-    image:AcaiImg,
+    image: AcaiImg,
     ingredients: ["Acai", "Granola", "Banana", "Peanut butter", "Cacao nibs"],
   },
   {
@@ -87,7 +84,7 @@ const ITEMS = [
     price: 7.0,
     kcal: 340,
     tags: ["vegan", "omega-3"],
-    image:ChiaImg,
+    image: ChiaImg,
     ingredients: ["Chia", "Coconut milk", "Mango", "Pineapple", "Toasted coconut"],
   },
   {
@@ -97,7 +94,7 @@ const ITEMS = [
     price: 2.0,
     kcal: 25,
     tags: ["detox", "immunity"],
-    image:GingerImg,
+    image: GingerImg,
     ingredients: ["Ginger", "Lemon", "Honey"],
   },
 ];
@@ -131,9 +128,11 @@ const Badge = ({ children, active, onClick }) => (
 export default function MenuPage() {
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [search, setSearch] = useState("");
-  const [activeTags, setActiveTags] = useState([]); 
+  const [activeTags, setActiveTags] = useState([]);
   const [sortBy, setSortBy] = useState("popular");
   const [toast, setToast] = useState(null);
+
+  const { addItem } = useCart(); // <-- NEW
 
   const toggleTag = (key) => {
     setActiveTags((prev) =>
@@ -170,13 +169,18 @@ export default function MenuPage() {
     return list;
   }, [category, search, activeTags, sortBy]);
 
+  // Add to cart + keep your toast behavior
   const handleAdd = (item) => {
+    addItem(
+      { id: item.id, name: item.name, price: item.price, image: item.image },
+      1
+    );
     setToast({ name: item.name });
     setTimeout(() => setToast(null), 1800);
   };
 
   return (
-    <div 
+    <div
       className="min-h-screen pt-28 relative"
       style={{
         backgroundImage: `url(${BgImg})`,
@@ -185,13 +189,12 @@ export default function MenuPage() {
       }}
     >
       {/* Overlay */}
-      <div className="absolute inset-0 bg-white/60"></div>
+      <div className="absolute inset-0 bg-white/80"></div>
 
       {/* Main content */}
       <div className="relative">
         <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
         <main id="menu" className="mx-auto max-w-6xl px-4 pb-24">
-
           {/* Hero */}
           <section className="mt-8 rounded-2xl bg-emerald-600/90 text-white p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
             <div className="flex-1">
@@ -257,7 +260,8 @@ export default function MenuPage() {
 
           {/* Count */}
           <p className="mt-3 text-sm text-gray-600">
-            Showing <span className="font-medium text-gray-900">{filtered.length}</span> item{filtered.length !== 1 ? "s" : ""}
+            Showing <span className="font-medium text-gray-900">{filtered.length}</span>{" "}
+            item{filtered.length !== 1 ? "s" : ""}
             {activeTags.length ? (
               <> with {activeTags.length} filter{activeTags.length !== 1 ? "s" : ""}</>
             ) : null}
@@ -268,7 +272,7 @@ export default function MenuPage() {
             {filtered.map((item) => (
               <article
                 key={item.id}
-                className="group rounded-2xl bg-white border border-emerald-100 shadow-sm hover:shadow-md transition-shadow"
+                className="group rounded-2xl bg-gray-200 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow"
               >
                 <div className="relative">
                   <img
@@ -288,16 +292,20 @@ export default function MenuPage() {
                   </div>
                 </div>
 
-                <div className="p-4">
-                  <h3 className="text-base font-semibold text-gray-900 line-clamp-1">{item.name}</h3>
+                <div className="p-4 ">
+                  <h3 className="text-base font-semibold text-gray-900 line-clamp-1">
+                    {item.name}
+                  </h3>
                   <div className="mt-1 flex items-center justify-between">
                     <p className="text-sm text-gray-500">{item.kcal} kcal</p>
-                    <p className="text-emerald-700 font-semibold">{formatCurrency(item.price)}</p>
+                    <p className="text-emerald-700 font-semibold">
+                      {formatCurrency(item.price)}
+                    </p>
                   </div>
 
                   <div className="mt-3 flex items-center justify-between">
                     <button
-                      onClick={() => handleAdd(item)}
+                      onClick={() => handleAdd(item)} // <-- wired to cart
                       className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
                     >
                       Add
@@ -323,6 +331,7 @@ export default function MenuPage() {
           className={`pointer-events-none fixed inset-x-0 bottom-6 flex justify-center transition-all duration-300 ${
             toast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
           }`}
+          aria-live="polite"
         >
           <div className="pointer-events-auto rounded-xl bg-gray-900 text-white px-4 py-2 text-sm shadow-lg">
             Added <span className="font-medium">{toast?.name}</span> to your order
