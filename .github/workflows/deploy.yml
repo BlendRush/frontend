@@ -34,6 +34,7 @@ jobs:
         host: ${{ secrets.FRONTEND_EC2_IP }}
         username: ubuntu
         key: ${{ secrets.FRONTEND_EC2_SSH_KEY }}
+        timeout: 600s 
         script: |
           cd frontend
           docker build -t frontend-app .
