@@ -46,7 +46,7 @@ jobs:
         host: ${{ secrets.FRONTEND_EC2_IP }}
         username: ubuntu
         key: ${{ secrets.FRONTEND_EC2_SSH_KEY }}
-        timeout: 300s
+        timeout: 600s
         script: |
           sudo apt-get update
           sudo apt-get install -y nginx
