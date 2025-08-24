@@ -8,6 +8,7 @@ import ForgotPW from './Pages/forgot-pw.jsx';
 import Menu from './Pages/Menu.jsx'; 
 import Cart from './Pages/Cart.jsx';
 import Orders from './Pages/Order.jsx';
+import About from './Pages/About.jsx'; // Assuming you have an About page
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
       <Route path="/menu" element={<Menu />} />
       <Route path="/cart" element={<Cart />} />
       <Route path="/orders" element={<Orders />} />
+      <Route path="/about" element={<About />} />
 
       {/* Add other routes as needed */}
       {/* Example: <Route path="/profile" element={<Profile />} /> */}
