@@ -20,7 +20,7 @@ export default function NavBar({ search = "", onSearchChange }) {
     try {
       localStorage.removeItem("auth:token"); // adjust if your auth key differs
     } catch {}
-    navigate("/sign-in");
+    navigate("/home");
   };
 
   return (
