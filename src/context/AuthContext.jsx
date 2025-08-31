@@ -11,8 +11,10 @@ export function AuthContextProvider({ children }) {
   const [token, setToken] = useState(() => getLocalStoragedata("token"));
 
   useEffect(() => {
-    if (token !== undefined) {
+    if (token) {
       setLocalStorageData("token", token);
+    } else {
+      localStorage.removeItem("token");
     }
   }, [token]);
 
