@@ -17,3 +17,13 @@ code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
 }
+
+.ant-notification {
+  z-index: 9999 !important;
+}
+
+.ant-notification-notice-message {
+  display: block !important;
+  color: #000 !important;
+  font-weight: bold;
+}

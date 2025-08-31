@@ -1,32 +1,62 @@
 // src/Pages/SignIn.jsx
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Button, Typography, Checkbox } from "antd";
 import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import { AuthContext } from "../context/AuthContext";
+import { passwordFieldValidation } from "../helpers/PasswordValidation";
+import { setLocalStorageData } from "../helpers/Storage";
+import { userSignInService } from "../services/UserService";
+import { useNotification } from "../context/NotificationContext";
 
 const { Text } = Typography;
 
 export default function SignIn() {
   const [form] = Form.useForm();
+  const { setToken } = useContext(AuthContext);
+  const { openNotification } = useNotification();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
   const onFinish = async (values) => {
-    setLoading(true);
     try {
-      console.log("Login submit:", values);
-      setTimeout(() => navigate("/home"), 600);
+      setLoading(true);
+
+      const userData = {
+        email: values.email,
+        password: values.password,
+      };
+
+      const response = await userSignInService(userData);
+      console.log("re", response);
+
+      if (response.message === "Login successful") {
+        openNotification("success", "Login Successful", "Welcome back!");
+
+        setToken(response.token);
+        setLocalStorageData("token", response.token);
+        setLocalStorageData("user", response.email);
+        navigate("/menu", { replace: true });
+      } else {
+        openNotification(
+          "error",
+          "Login Failed",
+          response.message || "Login failed. Please try again later"
+        );
+      }
+    } catch (error) {
+      console.error("Login error:", error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong. Please try again later.";
+
+      openNotification("error", "Login Failed", errorMessage);
     } finally {
       setLoading(false);
     }
-  };
-
-  const passwordFieldValidation = (_, value) => {
-    if (!value) return Promise.reject("Password is required!");
-    if (value.length < 6)
-      return Promise.reject("Password should be at least 6 characters long");
-    return Promise.resolve();
   };
 
   const googleAuth = () => {
@@ -80,7 +110,6 @@ export default function SignIn() {
               placeholder="Email"
               size="large"
               maxLength={100}
-              autoComplete="off"
             />
           </Form.Item>
 
