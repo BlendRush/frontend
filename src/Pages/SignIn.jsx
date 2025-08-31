@@ -110,7 +110,6 @@ export default function SignIn() {
               placeholder="Email"
               size="large"
               maxLength={100}
-              autoComplete="off"
             />
           </Form.Item>
 
