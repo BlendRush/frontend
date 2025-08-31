@@ -1,8 +1,8 @@
-const metadataServiceURL = "http://localhost:3000/";
+const metadataServiceURL = "http://localhost:3000/api/user/";
 
 export async function userSignUpService(userData) {
   try {
-    const response = await fetch(`${metadataServiceURL}api/user/user/signup`, {
+    const response = await fetch(`${metadataServiceURL}user/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -39,7 +39,7 @@ export async function userSignUpService(userData) {
 
 export async function userSignInService(userData) {
   try {
-    const response = await fetch(`${metadataServiceURL}authUser/login`, {
+    const response = await fetch(`${metadataServiceURL}user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
