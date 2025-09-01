@@ -36,7 +36,6 @@ export async function userSignUpService(userData) {
   }
 }
 
-
 export async function userSignInService(userData) {
   try {
     const response = await fetch(`${metadataServiceURL}user/login`, {
@@ -65,3 +64,30 @@ export async function userSignInService(userData) {
   }
 }
 
+export async function userResetPasswordService(email) {
+  try {
+    const response = await fetch(`${metadataServiceURL}user/forgot-password`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(email),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      return {
+        message: data.message || "Unable to reset your password",
+      };
+    }
+
+    return data;
+  } catch (error) {
+    console.error("Fetch error in userSignInService:", error);
+
+    return {
+      message: "Something went wrong. Please try again later.",
+    };
+  }
+}

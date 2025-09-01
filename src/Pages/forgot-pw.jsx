@@ -1,53 +1,62 @@
-import React, { useState, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import { Form, Input, Button, Typography, message } from "antd";
-import { LockOutlined } from "@ant-design/icons";
 import bg from "../assets/fpw.png";
+import { useNotification } from "../context/NotificationContext";
+import axios from "axios";
+import { MailOutlined } from "@ant-design/icons";
 
 const { Text } = Typography;
 
 const ForgotPW = () => {
-  const [searchParams] = useSearchParams();
-  const token = searchParams.get("token") || "";
-  const [newPassword, setNewPassword] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
-  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [form] = Form.useForm();
+  const [isSubmitted, setIsSubmitted] = useState(false);
+  const [isButtonDisabled, setIsButtonDisabled] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
+  const navigate = useNavigate();
+  const { openNotification } = useNotification();
 
-  useEffect(() => {
-    setIsButtonDisabled(newPassword.trim().length === 0);
-  }, [newPassword]);
-
-  // Simple inline validator to avoid external imports
-  const validatePassword = async (_rule, value) => {
-    if (!value) return Promise.reject(new Error("Please enter a password"));
-    if (value.length < 8) return Promise.reject(new Error("At least 8 characters required"));
-    return Promise.resolve();
-  };
-
-  const handleReset = async (e) => {
-    e.preventDefault();
+const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/authuser/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) throw new Error(data?.message || "Request failed");
-
-      message.success(data?.message || "Password reset successful", 5);
-      setNewPassword("");
+      const response = await axios.post(
+        "http://localhost:8080/authuser/forgot-password",
+        { email: values.email }
+      );
+      openNotification("success", "Reset successful", response.data.message);
+      message.success(response.data.message, 5);
+      navigate("/login");
+      setIsSubmitted(true);
       setIsButtonDisabled(true);
       form.resetFields();
     } catch (err) {
-      message.error(err?.message || "Something went wrong. Please try again.", 5);
-      console.error("Reset error:", err);
+      console.error("Full error:", err);
+      const errorMsg = err.response?.data?.message || "Something went wrong";
+      openNotification(
+        "error",
+        "Unable to reset your password",
+        errorMsg || "Something went wrong. Please try again."
+      );
+      message.error(String(errorMsg), 5);
     } finally {
       setIsLoading(false);
     }
   };
+
+  const handleFormChange = () => {
+    const email = form.getFieldValue("email");
+    const emailValid = form.getFieldError("email").length === 0;
+
+    if (email && emailValid && !isSubmitted) {
+      setIsButtonDisabled(false);
+    } else {
+      setIsButtonDisabled(true);
+    }
+  };
+
+  useEffect(() => {
+    handleFormChange();
+  }, []);
 
   return (
     <div
@@ -70,25 +79,39 @@ const ForgotPW = () => {
 
           {/* Form */}
           <div className="flex flex-col items-center w-full">
-            <Form
-              layout="vertical"
-              className="w-[380px] sm:w-[400px]"
-              onSubmitCapture={handleReset}
+             <Form
               form={form}
+              layout="vertical"
+              className="w-full"
+              onFinish={handleSubmit}
+              onFieldsChange={handleFormChange}
             >
               <Form.Item
-                name="password"
-                label="New Password"
-                className="custom-label"
-                rules={[{ validator: validatePassword, required: true }]}
+                name="email"
+                label="Enter Your Email "
+                rules={[
+                  {
+                    required: true,
+                    message: "Email is required!",
+                  },
+                  {
+                    type: "email",
+                    message: "Email is invalid!",
+                  },
+                ]}
               >
-                <Input.Password
-                  prefix={<LockOutlined />}
+                <Input
+                  prefix={<MailOutlined />}
+                  placeholder="Enter your email"
+                  onKeyDown={(e) => {
+                    const key = e.key;
+                    if (!/^[A-Za-z.@0-9]*$/.test(key) && key !== "Backspace") {
+                      e.preventDefault();
+                    }
+                  }}
                   size="large"
-                  value={newPassword}
-                  onChange={(e) => setNewPassword(e.target.value)}
-                  placeholder="Enter new password"
-                  maxLength={60}
+                  maxLength={100}
+                  autoComplete="off"
                 />
               </Form.Item>
 
@@ -98,10 +121,10 @@ const ForgotPW = () => {
                     type="primary"
                     htmlType="submit"
                     disabled={isButtonDisabled}
-                    className="w-full md:w-[300px] h-[45px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
+                    className="w-full md:w-[300px] h-[35px] text-base md:text-lg rounded-full text-white font-bold transition-all duration-300 ease-in-out bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D] hover:from-[#3FBFA8] hover:via-[#2CA58D] hover:to-[#207F6A]"
                     loading={isLoading}
                   >
-                    Reset Password
+                    Send Reset Link
                   </Button>
                 </div>
               </Form.Item>
