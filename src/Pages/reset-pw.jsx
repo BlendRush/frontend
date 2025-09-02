@@ -4,6 +4,7 @@ import { Form, Input, Button, Typography, message } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import bg from "../assets/fpw.png";
 import { passwordFieldValidation } from "../helpers/PasswordValidation";
+import { useNotification } from "../context/NotificationContext";
 
 const { Text } = Typography;
 
@@ -14,31 +15,39 @@ const ResetPW = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [form] = Form.useForm();
+  const { openNotification } = useNotification();
 
   useEffect(() => {
     setIsButtonDisabled(newPassword.trim().length === 0);
   }, [newPassword]);
 
- 
   const handleReset = async (e) => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch("http://localhost:8080/authuser/reset-password", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ token, newPassword }),
-      });
+      const res = await fetch(
+        "http://localhost:3000/api/user/user/reset-password",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ token, newPassword }),
+        }
+      );
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.message || "Request failed");
 
-      message.success(data?.message || "Password reset successful", 5);
+      openNotification("success", "Reset successful", res.data.message);
       setNewPassword("");
       setIsButtonDisabled(true);
       form.resetFields();
     } catch (err) {
-      message.error(err?.message || "Something went wrong. Please try again.", 5);
-      console.error("Reset error:", err);
+      const errorMsg = err.response?.data?.message || "Something went wrong";
+
+      openNotification(
+        "error",
+        "Unable to reset your password",
+        errorMsg || "Something went wrong. Please try again."
+      );
     } finally {
       setIsLoading(false);
     }

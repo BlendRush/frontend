@@ -20,10 +20,10 @@ const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:8080/authuser/forgot-password",
+        "http://localhost:3000/api/user/user/forgot-password",
         { email: values.email }
       );
-      openNotification("success", "Reset successful", response.data.message);
+      openNotification("success", "Reset Link Send successfully", response.data.message);
       message.success(response.data.message, 5);
       navigate("/login");
       setIsSubmitted(true);
@@ -82,7 +82,7 @@ const handleSubmit = async (values) => {
              <Form
               form={form}
               layout="vertical"
-              className="w-full"
+              className="w-[380px] sm:w-[400px]"
               onFinish={handleSubmit}
               onFieldsChange={handleFormChange}
             >
