@@ -60,7 +60,7 @@ export default function SignIn() {
   };
 
   const googleAuth = () => {
-    window.open("http://localhost:8080/auth/google", "_self");
+    window.open("http://localhost:3000/api/user/auth/google", "_self");
   };
 
   return (

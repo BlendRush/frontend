@@ -10,6 +10,7 @@ import Cart from "./Pages/Cart.jsx";
 import Orders from "./Pages/Order.jsx";
 import About from "./Pages/About.jsx"; // Assuming you have an About page
 import { AuthContext } from "./context/AuthContext.jsx";
+import ResetPW from "./Pages/reset-pw.jsx";
 
 export default function App() {
   const { token } = useContext(AuthContext);
@@ -21,6 +22,8 @@ export default function App() {
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-pw" element={<ForgotPW />} />
+      <Route path="/reset-pw" element={<ResetPW />} />
+
       {token !== null && token !== "" ? (
         <>
           <Route path="/menu" element={<Menu />} />

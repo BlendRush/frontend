@@ -8,15 +8,19 @@ export const AuthContext = createContext({
 });
 
 export function AuthContextProvider({ children }) {
-  const [token, setToken] = useState(() => getLocalStoragedata("token"));
+   const urlParams = new URLSearchParams(window.location.search);
+  const tokenFromURL = urlParams.get("token");
+  const storedToken = getLocalStoragedata("token");
+  const initialToken = tokenFromURL || storedToken;
+  const [token, setToken] = useState(initialToken);
 
-  useEffect(() => {
-    if (token) {
-      setLocalStorageData("token", token);
-    } else {
-      localStorage.removeItem("token");
+   useEffect(() => {
+    if (tokenFromURL) {
+      setLocalStorageData("token", tokenFromURL);
+      const cleanURL = window.location.origin + window.location.pathname;
+      window.history.replaceState({}, document.title, cleanURL);
     }
-  }, [token]);
+  }, [tokenFromURL]);
 
   return (
     <AuthContext.Provider
