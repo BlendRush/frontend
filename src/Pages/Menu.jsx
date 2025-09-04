@@ -179,68 +179,79 @@ export default function MenuPage() {
           </p>
 
           {/* Grid */}
+          {loading}
           <section className="mt-4 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-            {filtered.map((item) => (
-              <article
-                key={item.id}
-                className="group rounded-2xl bg-gray-200 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow"
-              >
-                <div className="relative">
-                  <img
-                    src={item.image}
-                    alt={item.name}
-                    className="h-40 w-full object-cover rounded-t-2xl"
-                  />
-                  <div className="absolute left-2 top-2 flex gap-2">
-                    {(Array.isArray(item.tags) ? item.tags : [])
-                      .flatMap((t) =>
-                        t
-                          .split(",")
-                          .map((s) => s.replace(/(^"|"$)/g, "").trim())
-                      )
-                      .slice(0, 2)
-                      .map((t) => (
-                        <span
-                          key={t}
-                          className="rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200"
-                        >
-                          {t.replaceAll("-", " ")}
-                        </span>
-                      ))}
-                  </div>
-                </div>
-
-                <div className="p-4 ">
-                  <h3 className="text-base font-semibold text-gray-900 line-clamp-1">
-                    {item.name}
-                  </h3>
-                  <div className="mt-1 flex items-center justify-between">
-                    <p className="text-sm text-gray-500">{item.kcal} kcal</p>
-                    <p className="text-emerald-700 font-semibold">
-                      {formatCurrency(item.price)}
-                    </p>
+            {loading ? (
+              <div className="col-span-full flex justify-center items-center py-20">
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-emerald-600"></div>
+              </div>
+            ) : filtered.length > 0 ? (
+              filtered.map((item) => (
+                <article
+                  key={item.id}
+                  className="group rounded-2xl bg-gray-200 border border-emerald-100 shadow-sm hover:shadow-md transition-shadow"
+                >
+                  <div className="relative">
+                    <img
+                      src={item.image}
+                      alt={item.name}
+                      className="h-40 w-full object-cover rounded-t-2xl"
+                    />
+                    <div className="absolute left-2 top-2 flex gap-2">
+                      {(Array.isArray(item.tags) ? item.tags : [])
+                        .flatMap((t) =>
+                          t
+                            .split(",")
+                            .map((s) => s.replace(/(^"|"$)/g, "").trim())
+                        )
+                        .slice(0, 2)
+                        .map((t) => (
+                          <span
+                            key={t}
+                            className="rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200"
+                          >
+                            {t.replaceAll("-", " ")}
+                          </span>
+                        ))}
+                    </div>
                   </div>
 
-                  <div className="mt-3 flex items-center justify-between">
-                    <button
-                      onClick={() => handleAdd(item)} // <-- wired to cart
-                      className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
-                    >
-                      Add
-                    </button>
-
-                    <details>
-                      <summary className="cursor-pointer text-sm text-emerald-700 hover:underline">
-                        Ingredients
-                      </summary>
-                      <p className="mt-1 text-sm text-gray-600">
-                        {item.ingredients.join(", ")}
+                  <div className="p-4 ">
+                    <h3 className="text-base font-semibold text-gray-900 line-clamp-1">
+                      {item.name}
+                    </h3>
+                    <div className="mt-1 flex items-center justify-between">
+                      <p className="text-sm text-gray-500">{item.kcal} kcal</p>
+                      <p className="text-emerald-700 font-semibold">
+                        {formatCurrency(item.price)}
                       </p>
-                    </details>
+                    </div>
+
+                    <div className="mt-3 flex items-center justify-between">
+                      <button
+                        onClick={() => handleAdd(item)} // <-- wired to cart
+                        className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
+                      >
+                        Add
+                      </button>
+
+                      <details>
+                        <summary className="cursor-pointer text-sm text-emerald-700 hover:underline">
+                          Ingredients
+                        </summary>
+                        <p className="mt-1 text-sm text-gray-600">
+                          {item.ingredients.join(", ")}
+                        </p>
+                      </details>
+                    </div>
                   </div>
-                </div>
-              </article>
-            ))}
+                </article>
+              ))
+            ) : (
+              <p className="col-span-full text-center text-gray-500 py-10">
+                No items found.
+              </p>
+            )}
           </section>
         </main>
 
