@@ -1,158 +1,76 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import NavSearchBar from "../Component/N-SearchBar.js";
-import { useCart } from "../Component/CartContext"; // <-- NEW
-
-import AvocadoImg from "../assets/Avacado_S.png";
-import BerryImg from "../assets/Berry_S.png";
-import PinappleSImg from "../assets/pineapple_s.png";
-import OrangeImg from "../assets/Orange_J.png";
-import BeetImg from "../assets/Beet_J.png";
-import AcaiImg from "../assets/Acai_B.png";
-import ChiaImg from "../assets/Chia_B.png";
-import GingerImg from "../assets/Ginger_S.png";
+import { useCart } from "../Component/CartContext";
 import BannerImg from "../assets/Banner.png";
 import BgImg from "../assets/MBg.png";
+import { getMenuService } from "../services/MenuService.jsx";
 
-// ---- Sample data -----------------------------------------------------------
-const CATEGORIES = ["Smoothies", "Fresh Juices", "Bowls", "Shots"];
-
-const ITEMS = [
-  {
-    id: "s1",
-    name: "Green Glow Elixir",
-    category: "Smoothies",
-    price: 5.5,
-    kcal: 230,
-    tags: ["vegan", "no-added-sugar"],
-    image: AvocadoImg,
-    ingredients: ["Spinach, Avocado, Kiwi, Coconut water, Honey"],
-  },
-  {
-    id: "s2",
-    name: "Berry Zen Fusion",
-    category: "Smoothies",
-    price: 6.0,
-    kcal: 210,
-    tags: ["vegan", "antioxidant"],
-    image: BerryImg,
-    ingredients: ["Blueberry", "Strawberry", "Raspberry", "Oat milk", "Chia"],
-  },
-  {
-    id: "s3",
-    name: "Golden Sunrise Shake",
-    category: "Smoothies",
-    price: 6.5,
-    kcal: 190,
-    tags: ["vegan", "low-sugar"],
-    image: PinappleSImg,
-    ingredients: ["Mango, Pineapple, Banana, Turmeric, Oat milk"],
-  },
-  {
-    id: "j1",
-    name: "Citrus Boost Juice",
-    category: "Fresh Juices",
-    price: 4.0,
-    kcal: 120,
-    tags: ["vitamin-c"],
-    image: OrangeImg,
-    ingredients: ["Fresh orange, Lemon, Ginger, Honey, Water"],
-  },
-  {
-    id: "j2",
-    name: "Beet Revive Juice",
-    category: "Fresh Juices",
-    price: 4.5,
-    kcal: 130,
-    tags: ["vegan", "detox"],
-    image: BeetImg,
-    ingredients: ["Beetroot, Carrot, Apple, Lemon, Mint leaves"],
-  },
-  {
-    id: "b1",
-    name: "Acai Power Bowl",
-    category: "Bowls",
-    price: 7.5,
-    kcal: 380,
-    tags: ["vegan", "protein"],
-    image: AcaiImg,
-    ingredients: ["Acai", "Granola", "Banana", "Peanut butter", "Cacao nibs"],
-  },
-  {
-    id: "b2",
-    name: "Tropical Chia Bowl",
-    category: "Bowls",
-    price: 7.0,
-    kcal: 340,
-    tags: ["vegan", "omega-3"],
-    image: ChiaImg,
-    ingredients: ["Chia", "Coconut milk", "Mango", "Pineapple", "Toasted coconut"],
-  },
-  {
-    id: "sh1",
-    name: "Ginger Shot",
-    category: "Shots",
-    price: 2.0,
-    kcal: 25,
-    tags: ["detox", "immunity"],
-    image: GingerImg,
-    ingredients: ["Ginger", "Lemon", "Honey"],
-  },
-];
-
-const TAG_OPTIONS = [
-  { key: "vegan", label: "Vegan" },
-  { key: "protein", label: "High Protein" },
-  { key: "low-sugar", label: "Low Sugar" },
-  { key: "detox", label: "Detox" },
-  { key: "vitamin-c", label: "Vitamin C" },
-];
-
-// ---- Helpers ---------------------------------------------------------------
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
-// Simple badge component
-const Badge = ({ children, active, onClick }) => (
-  <button
-    onClick={onClick}
-    className={`whitespace-nowrap rounded-full border px-3 py-1 text-sm transition-all ${
-      active
-        ? "bg-emerald-600 text-white border-emerald-600 shadow"
-        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-    }`}
-  >
-    {children}
-  </button>
-);
-
-// ---- Main Page -------------------------------------------------------------
 export default function MenuPage() {
-  const [category, setCategory] = useState(CATEGORIES[0]);
+  const [category, setCategory] = useState(null);
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState([]);
   const [sortBy, setSortBy] = useState("popular");
   const [toast, setToast] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [items, setItems] = useState([]);
+  const [categories, setCategories] = useState([]);
 
-  const { addItem } = useCart(); // <-- NEW
+  useEffect(() => {
+    fetchMenuItemData();
+  }, []);
 
-  const toggleTag = (key) => {
-    setActiveTags((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
+  const fetchMenuItemData = async () => {
+    setLoading(true);
+    const response = await getMenuService();
+
+    if (response.success) {
+      setItems(response.data);
+
+      const uniqueCats = [...new Set(response.data.map((it) => it.category))];
+      setCategories(["All", ...uniqueCats]);
+
+      if (!category) {
+        setCategory("All");
+      }
+      if (uniqueCats.length && !category) {
+        setCategory(uniqueCats[0]);
+      }
+    } else {
+      console.log("Error:", response.message);
+    }
+
+    setLoading(false);
   };
 
+  const { addItem } = useCart();
+
   const filtered = useMemo(() => {
-    let list = ITEMS.filter((it) => it.category === category);
+    if (!category) return [];
+
+    let list =
+      category && category !== "All"
+        ? items.filter(
+            (it) => it.category?.toLowerCase() === category.toLowerCase()
+          )
+        : [...items];
+
     if (search.trim()) {
       const q = search.toLowerCase();
       list = list.filter(
         (it) =>
           it.name.toLowerCase().includes(q) ||
-          it.ingredients.join(" ").toLowerCase().includes(q)
+          (it.ingredients || []).join(" ").toLowerCase().includes(q)
       );
     }
+
     if (activeTags.length) {
-      list = list.filter((it) => activeTags.every((t) => it.tags.includes(t)));
+      list = list.filter((it) =>
+        activeTags.every((t) => (it.tags || []).includes(t))
+      );
     }
+
     switch (sortBy) {
       case "price-asc":
         list = [...list].sort((a, b) => a.price - b.price);
@@ -166,10 +84,10 @@ export default function MenuPage() {
       default:
         break;
     }
-    return list;
-  }, [category, search, activeTags, sortBy]);
 
-  // Add to cart + keep your toast behavior
+    return list;
+  }, [category, search, activeTags, sortBy, items]);
+
   const handleAdd = (item) => {
     addItem(
       { id: item.id, name: item.name, price: item.price, image: item.image },
@@ -210,60 +128,53 @@ export default function MenuPage() {
             />
           </section>
 
-          {/* Category tabs */}
           <section className="mt-6">
-            <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
-              {CATEGORIES.map((c) => (
-                <button
-                  key={c}
-                  onClick={() => setCategory(c)}
-                  className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
-                    c === category
-                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                  }`}
-                >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </section>
+            <div className="flex justify-between items-center gap-2 overflow-x-auto no-scrollbar pb-1">
+              {/* Categories */}
+              <div className="flex gap-2">
+                {categories.map((c) => (
+                  <button
+                    key={c}
+                    onClick={() => setCategory(c)}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
+                      c === category
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
+                  >
+                    {c}
+                  </button>
+                ))}
+              </div>
 
-          {/* Filters + sort */}
-          <section className="mt-4 flex flex-col md:flex-row md:items-center md:justify-between gap-3">
-            <div className="flex flex-wrap gap-2">
-              {TAG_OPTIONS.map((t) => (
-                <Badge
-                  key={t.key}
-                  active={activeTags.includes(t.key)}
-                  onClick={() => toggleTag(t.key)}
+              {/* Sort by */}
+              <div className="flex items-center gap-2">
+                <label className="text-sm text-gray-600">Sort by</label>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
                 >
-                  {t.label}
-                </Badge>
-              ))}
-            </div>
-
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-600">Sort by</label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm focus:ring-2 focus:ring-emerald-500 focus:outline-none"
-              >
-                <option value="popular">Popular</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-                <option value="kcal">Calories</option>
-              </select>
+                  <option value="popular">Popular</option>
+                  <option value="price-asc">Price: Low to High</option>
+                  <option value="price-desc">Price: High to Low</option>
+                  <option value="kcal">Calories</option>
+                </select>
+              </div>
             </div>
           </section>
 
           {/* Count */}
           <p className="mt-3 text-sm text-gray-600">
-            Showing <span className="font-medium text-gray-900">{filtered.length}</span>{" "}
+            Showing{" "}
+            <span className="font-medium text-gray-900">{filtered.length}</span>{" "}
             item{filtered.length !== 1 ? "s" : ""}
             {activeTags.length ? (
-              <> with {activeTags.length} filter{activeTags.length !== 1 ? "s" : ""}</>
+              <>
+                {" "}
+                with {activeTags.length} filter
+                {activeTags.length !== 1 ? "s" : ""}
+              </>
             ) : null}
           </p>
 
@@ -281,14 +192,21 @@ export default function MenuPage() {
                     className="h-40 w-full object-cover rounded-t-2xl"
                   />
                   <div className="absolute left-2 top-2 flex gap-2">
-                    {item.tags.slice(0, 2).map((t) => (
-                      <span
-                        key={t}
-                        className="rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200"
-                      >
-                        {t.replaceAll("-", " ")}
-                      </span>
-                    ))}
+                    {(Array.isArray(item.tags) ? item.tags : [])
+                      .flatMap((t) =>
+                        t
+                          .split(",")
+                          .map((s) => s.replace(/(^"|"$)/g, "").trim())
+                      )
+                      .slice(0, 2)
+                      .map((t) => (
+                        <span
+                          key={t}
+                          className="rounded-full bg-white/90 backdrop-blur px-2 py-0.5 text-[11px] font-medium text-emerald-700 border border-emerald-200"
+                        >
+                          {t.replaceAll("-", " ")}
+                        </span>
+                      ))}
                   </div>
                 </div>
 
@@ -334,7 +252,8 @@ export default function MenuPage() {
           aria-live="polite"
         >
           <div className="pointer-events-auto rounded-xl bg-gray-900 text-white px-4 py-2 text-sm shadow-lg">
-            Added <span className="font-medium">{toast?.name}</span> to your order
+            Added <span className="font-medium">{toast?.name}</span> to your
+            order
           </div>
         </div>
       </div>
