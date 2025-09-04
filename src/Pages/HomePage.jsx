@@ -1,5 +1,4 @@
 // src/Pages/HomePage.jsx
-import React from "react";
 import NavBar from "../Component/NavBar";
 import homeBg from "../assets/home-bg.png";
 
