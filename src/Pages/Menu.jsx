@@ -5,6 +5,7 @@ import BgImg from "../assets/MBg.png";
 import { getMenuService } from "../services/MenuService.jsx";
 import { getLocalStoragedata } from "../helpers/Storage.js";
 import { useNotification } from "../context/NotificationContext.jsx";
+import { useCart } from "../Component/CartContext.jsx";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
@@ -18,9 +19,11 @@ export default function MenuPage() {
   const [categories, setCategories] = useState([]);
   const { openNotification } = useNotification();
   const serviceURL = process.env.REACT_APP_API_URL;
+  const { fetchCart } = useCart();
 
   useEffect(() => {
     fetchMenuItemData();
+    fetchCart();
   }, []);
 
   const fetchMenuItemData = async () => {
@@ -116,6 +119,7 @@ export default function MenuPage() {
       }
 
       openNotification("success", `${item.name} added to cart`);
+      fetchCart();
     } catch (error) {
       console.error(error);
       openNotification("error", error.message || "Something went wrong");
