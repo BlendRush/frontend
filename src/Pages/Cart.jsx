@@ -11,12 +11,13 @@ export default function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const serviceURL = process.env.REACT_APP_API_URL;
 
   const fetchCart = async () => {
     setLoading(true);
     try {
       const token = getLocalStoragedata("token");
-      const res = await fetch("http://localhost:3000/api/carts/cart-items", {
+      const res = await fetch(`${serviceURL}carts/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();
@@ -38,7 +39,7 @@ export default function Cart() {
 ) => {
     try {
       const token = getLocalStoragedata("token");
-      await fetch(`http://localhost:3000/api/carts/cart-items/${itemId}`, {
+      await fetch(`${serviceURL}carts/cart-items/${itemId}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -62,7 +63,7 @@ export default function Cart() {
   const removeItem = async (itemId) => {
     try {
       const token = getLocalStoragedata("token");
-      await fetch(`http://localhost:3000/api/carts/cart-items/${itemId}`, {
+      await fetch(`${serviceURL}carts/cart-items/${itemId}`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -76,7 +77,7 @@ export default function Cart() {
   const clearCart = async () => {
     try {
       const token = getLocalStoragedata("token");
-      await fetch("http://localhost:3000/api/carts/cart-items/", {
+      await fetch(`${serviceURL}carts/cart-items/`, {
         method: "DELETE",
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -98,7 +99,7 @@ export default function Cart() {
 
     try {
       const token = getLocalStoragedata("token");
-      const res = await fetch("http://localhost:3000/api/orders", {
+      const res = await fetch(`${serviceURL}orders`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

@@ -1,8 +1,8 @@
-const menuServiceURL = "http://localhost:3000/api/menu/";
+const serviceURL = process.env.REACT_APP_API_URL;
 
 export async function getMenuService() {
   try {
-    const response = await fetch(`${menuServiceURL}menu-items`, {
+    const response = await fetch(`${serviceURL}menu/menu-items`, {
       method: "GET",
       headers: {
         "Content-Type": "application/json",

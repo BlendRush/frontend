@@ -5,11 +5,12 @@ const CartContext = createContext();
 
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
+  const serviceURL = process.env.REACT_APP_API_URL;
 
   const fetchCart = async () => {
     try {
       const token = getLocalStoragedata("token");
-      const res = await fetch("http://localhost:3000/api/carts/cart-items", {
+      const res = await fetch(`${serviceURL}carts/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       const data = await res.json();

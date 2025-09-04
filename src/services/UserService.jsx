@@ -1,8 +1,8 @@
-const metadataServiceURL = "http://localhost:3000/api/user/";
+const serviceURL = process.env.REACT_APP_API_URL;
 
 export async function userSignUpService(userData) {
   try {
-    const response = await fetch(`${metadataServiceURL}user/signup`, {
+    const response = await fetch(`${serviceURL}user/user/signup`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -38,7 +38,7 @@ export async function userSignUpService(userData) {
 
 export async function userSignInService(userData) {
   try {
-    const response = await fetch(`${metadataServiceURL}user/login`, {
+    const response = await fetch(`${serviceURL}user/user/login`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -66,7 +66,7 @@ export async function userSignInService(userData) {
 
 export async function userResetPasswordService(email) {
   try {
-    const response = await fetch(`${metadataServiceURL}user/forgot-password`, {
+    const response = await fetch(`${serviceURL}user/user/forgot-password`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
