@@ -15,12 +15,13 @@ const ForgotPW = () => {
   const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
   const { openNotification } = useNotification();
+  const serviceURL = process.env.REACT_APP_API_URL;
 
   const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
-        "http://localhost:3000/api/user/user/forgot-password",
+        `${serviceURL}user/user/forgot-password`,
         { email: values.email }
       );
       openNotification("success", "Reset Link Send successfully", response.data.message);

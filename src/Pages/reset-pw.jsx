@@ -16,6 +16,7 @@ const ResetPW = () => {
   const [isButtonDisabled, setIsButtonDisabled] = useState(true);
   const [form] = Form.useForm();
   const { openNotification } = useNotification();
+  const serviceURL = process.env.REACT_APP_API_URL;
 
   useEffect(() => {
     setIsButtonDisabled(newPassword.trim().length === 0);
@@ -25,14 +26,11 @@ const ResetPW = () => {
     e.preventDefault();
     setIsLoading(true);
     try {
-      const res = await fetch(
-        "http://localhost:3000/api/user/user/reset-password",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ token, newPassword }),
-        }
-      );
+      const res = await fetch(`${serviceURL}user/user/reset-password`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ token, newPassword }),
+      });
       const data = await res.json().catch(() => ({}));
       if (!res.ok) throw new Error(data?.message || "Request failed");
 

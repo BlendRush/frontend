@@ -13,6 +13,7 @@ import { useNotification } from "../context/NotificationContext";
 const { Text } = Typography;
 
 export default function SignIn() {
+  const serviceURL = process.env.REACT_APP_API_URL;
   const [form] = Form.useForm();
   const { setToken } = useContext(AuthContext);
   const { openNotification } = useNotification();
@@ -60,7 +61,7 @@ export default function SignIn() {
   };
 
   const googleAuth = () => {
-    window.open("http://localhost:3000/api/user/auth/google", "_self");
+    window.open(`${serviceURL}user/auth/google`, "_self");
   };
 
   return (

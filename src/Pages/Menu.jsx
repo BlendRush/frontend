@@ -5,6 +5,7 @@ import BgImg from "../assets/MBg.png";
 import { getMenuService } from "../services/MenuService.jsx";
 import { getLocalStoragedata } from "../helpers/Storage.js";
 import { useNotification } from "../context/NotificationContext.jsx";
+import { useCart } from "../Component/CartContext.jsx";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
@@ -19,10 +20,13 @@ export default function MenuPage() {
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
   const { openNotification } = useNotification();
+  const serviceURL = process.env.REACT_APP_API_URL;
+  const { fetchCart } = useCart();
 
   useEffect(() => {
     fetchMenuItemData();
-  });
+    fetchCart();
+  }, []);
 
   const fetchMenuItemData = async () => {
     setLoading(true);
@@ -53,8 +57,8 @@ export default function MenuPage() {
     let list =
       category && category !== "All"
         ? items.filter(
-          (it) => it.category?.toLowerCase() === category.toLowerCase()
-        )
+            (it) => it.category?.toLowerCase() === category.toLowerCase()
+          )
         : [...items];
 
     if (search.trim()) {
@@ -89,40 +93,40 @@ export default function MenuPage() {
     return list;
   }, [category, search, activeTags, sortBy, items]);
 
- const handleAdd = async (item) => {
-  try {
-    const token = getLocalStoragedata("token");
-    if (!token) {
-      return openNotification("error", "Please log in first");
+  const handleAdd = async (item) => {
+    try {
+      const token = getLocalStoragedata("token");
+      if (!token) {
+        return openNotification("error", "Please log in first");
+      }
+
+      const res = await fetch(`${serviceURL}carts/cart-items`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          itemId: item.itemId,
+          name: item.name,
+          image: item.image,
+          price: item.price,
+          quantity: 1,
+        }),
+      });
+
+      if (!res.ok) {
+        const errData = await res.json();
+        throw new Error(errData.message || "Failed to add item");
+      }
+
+      openNotification("success", `${item.name} added to cart`);
+      fetchCart();
+    } catch (error) {
+      console.error(error);
+      openNotification("error", error.message || "Something went wrong");
     }
-
-    const res = await fetch("http://localhost:3000/api/carts/cart-items", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-      body: JSON.stringify({
-        itemId: item.itemId, 
-        name: item.name,
-        image: item.image,
-        price: item.price,
-        quantity: 1,
-      }),
-    });
-
-    if (!res.ok) {
-      const errData = await res.json();
-      throw new Error(errData.message || "Failed to add item");
-    }
-
-    openNotification("success", `${item.name} added to cart`);
-  } catch (error) {
-    console.error(error);
-    openNotification("error", error.message || "Something went wrong");
-  }
-};
-
+  };
 
   return (
     <div
@@ -163,10 +167,11 @@ export default function MenuPage() {
                   <button
                     key={c}
                     onClick={() => setCategory(c)}
-                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${c === category
-                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
+                      c === category
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     {c}
                   </button>
