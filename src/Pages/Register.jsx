@@ -1,14 +1,22 @@
 // src/Pages/Register.jsx
-import React, { useRef, useState, useEffect } from "react";
+import React, { useRef, useState, useEffect, useContext } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Checkbox, Button, Typography, Modal } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
 import { Link, useNavigate } from "react-router-dom";
+import { passwordFieldValidation } from "../helpers/PasswordValidation";
+import { userSignUpService } from "../services/UserService";
+import { AuthContext } from "../context/AuthContext";
+import { useNotification } from "../context/NotificationContext";
+import { setLocalStorageData } from "../helpers/Storage";
 
 const { Text } = Typography;
 
 export default function Register() {
   const [form] = Form.useForm();
+  const { setToken } = useContext(AuthContext);
+  const { openNotification } = useNotification();
+
   const navigate = useNavigate();
   const [loading, setLoading] = useState(false);
 
@@ -44,18 +52,37 @@ export default function Register() {
   const onFinish = async (values) => {
     setLoading(true);
     try {
-      console.log("Register submit:", values);
-      setTimeout(() => navigate("/home"), 600);
+      setLoading(true);
+      const userData = {
+        email: values.email,
+        password: values.password,
+      };
+      const response = await userSignUpService(userData);
+      if (response.message === "Successfully Registered") {
+        openNotification("success", "Signup Successful", "Welcome!");
+        setToken(response?.token);
+        setLocalStorageData("token", response?.token);
+        setLocalStorageData("user", response?.email);
+        navigate("/menu", { replace: true });
+      } else {
+        openNotification(
+          "error",
+          "Signup Failed",
+          response.message || "Signup failed.Please try again later"
+        );
+      }
+    } catch (error) {
+      console.error("signup error:", error);
+
+      const errorMessage =
+        error?.response?.data?.message ||
+        error?.message ||
+        "Something went wrong. Please try again later.";
+
+      openNotification("error", "Signup Failed", errorMessage);
     } finally {
       setLoading(false);
     }
-  };
-
-  const passwordFieldValidation = (_, value) => {
-    if (!value) return Promise.reject("Password is required!");
-    if (value.length < 6)
-      return Promise.reject("Password should be at least 6 characters long");
-    return Promise.resolve();
   };
 
   return (
@@ -141,15 +168,14 @@ export default function Register() {
               }),
             ]}
           >
-            <Checkbox>
+            <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
               I agree to the{" "}
-              <button
-                type="button"
-                className="text-white-600 underline"
+              <span
+                className="text-textColorTwo cursor-pointer underline"
                 onClick={() => setModalVisible(true)}
               >
                 Terms & Privacy Policy
-              </button>
+              </span>
             </Checkbox>
           </Form.Item>
 
@@ -174,7 +200,7 @@ export default function Register() {
           </Form.Item>
         </Form>
 
-        <div className="text-center text-sm md:text-base text-white-800 " >
+        <div className="text-center text-sm md:text-base text-white-800 ">
           Already have an account?{" "}
           <Link to="/sign-in" className="text- white-600 hover:underline">
             Sign In
@@ -207,28 +233,22 @@ export default function Register() {
             lineHeight: "1.6",
           }}
         >
-          <p style={{ color: "red", fontWeight: "bold" }}>🍹 Terms and Conditions</p>
+          <p style={{ color: "red", fontWeight: "bold" }}>
+            🍹 Terms and Conditions
+          </p>
           <p>
-
             Use our app to browse the menu, order drinks, and enjoy rewards.
-
-            Prices and offers may change.
-
-            Orders are confirmed after payment; contact us quickly for changes or cancellations.
-
-            Don’t misuse the app or our content.
-
-
-
-            You can update or delete your data anytime.</p>
+            Prices and offers may change. Orders are confirmed after payment;
+            contact us quickly for changes or cancellations. Don’t misuse the
+            app or our content. You can update or delete your data anytime.
+          </p>
           <p style={{ fontWeight: "bold" }}>🔒 Privacy Policy</p>
-          <p> 
-
-            We collect your name, contact info, address, and order history to serve you better.
-
-            Your data is safe with us — we never sell it.
-
-            We share only with trusted partners (e.g., delivery, payment processing).</p>
+          <p>
+            We collect your name, contact info, address, and order history to
+            serve you better. Your data is safe with us — we never sell it. We
+            share only with trusted partners (e.g., delivery, payment
+            processing).
+          </p>
           <p>
             <em>Scroll to the bottom to enable acceptance.</em>
           </p>
