@@ -1,9 +1,10 @@
-import React, { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import NavSearchBar from "../Component/N-SearchBar.js";
-import { useCart } from "../Component/CartContext";
 import BannerImg from "../assets/Banner.png";
 import BgImg from "../assets/MBg.png";
 import { getMenuService } from "../services/MenuService.jsx";
+import { getLocalStoragedata } from "../helpers/Storage.js";
+import { useNotification } from "../context/NotificationContext.jsx";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
@@ -12,10 +13,10 @@ export default function MenuPage() {
   const [search, setSearch] = useState("");
   const [activeTags, setActiveTags] = useState([]);
   const [sortBy, setSortBy] = useState("popular");
-  const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
   const [categories, setCategories] = useState([]);
+  const { openNotification } = useNotification();
 
   useEffect(() => {
     fetchMenuItemData();
@@ -43,8 +44,6 @@ export default function MenuPage() {
 
     setLoading(false);
   };
-
-  const { addItem } = useCart();
 
   const filtered = useMemo(() => {
     if (!category) return [];
@@ -88,14 +87,40 @@ export default function MenuPage() {
     return list;
   }, [category, search, activeTags, sortBy, items]);
 
-  const handleAdd = (item) => {
-    addItem(
-      { id: item.id, name: item.name, price: item.price, image: item.image },
-      1
-    );
-    setToast({ name: item.name });
-    setTimeout(() => setToast(null), 1800);
-  };
+ const handleAdd = async (item) => {
+  try {
+    const token = getLocalStoragedata("token");
+    if (!token) {
+      return openNotification("error", "Please log in first");
+    }
+
+    const res = await fetch("http://localhost:3000/api/carts/cart-items", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        itemId: item.itemId, 
+        name: item.name,
+        image: item.image,
+        price: item.price,
+        quantity: 1,
+      }),
+    });
+
+    if (!res.ok) {
+      const errData = await res.json();
+      throw new Error(errData.message || "Failed to add item");
+    }
+
+    openNotification("success", `${item.name} added to cart`);
+  } catch (error) {
+    console.error(error);
+    openNotification("error", error.message || "Something went wrong");
+  }
+};
+
 
   return (
     <div
@@ -229,7 +254,7 @@ export default function MenuPage() {
 
                     <div className="mt-3 flex items-center justify-between">
                       <button
-                        onClick={() => handleAdd(item)} // <-- wired to cart
+                        onClick={() => handleAdd(item)}
                         className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
                       >
                         Add
@@ -254,19 +279,6 @@ export default function MenuPage() {
             )}
           </section>
         </main>
-
-        {/* Toast */}
-        <div
-          className={`pointer-events-none fixed inset-x-0 bottom-6 flex justify-center transition-all duration-300 ${
-            toast ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"
-          }`}
-          aria-live="polite"
-        >
-          <div className="pointer-events-auto rounded-xl bg-gray-900 text-white px-4 py-2 text-sm shadow-lg">
-            Added <span className="font-medium">{toast?.name}</span> to your
-            order
-          </div>
-        </div>
       </div>
     </div>
   );
