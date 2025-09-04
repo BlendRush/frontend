@@ -10,7 +10,9 @@ const formatCurrency = (n) => `$${n.toFixed(2)}`;
 export default function MenuPage() {
   const [category, setCategory] = useState(null);
   const [search, setSearch] = useState("");
-  const [activeTags, setActiveTags] = useState([]);
+  // const [activeTags, setActiveTags] = useState([]);
+  const [activeTags] = useState([]);
+
   const [sortBy, setSortBy] = useState("popular");
   const [toast, setToast] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -19,7 +21,7 @@ export default function MenuPage() {
 
   useEffect(() => {
     fetchMenuItemData();
-  }, []);
+  });
 
   const fetchMenuItemData = async () => {
     setLoading(true);
@@ -137,8 +139,8 @@ export default function MenuPage() {
                     key={c}
                     onClick={() => setCategory(c)}
                     className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${c === category
-                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
                       }`}
                   >
                     {c}
