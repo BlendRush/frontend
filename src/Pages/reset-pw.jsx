@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { Form, Input, Button, Typography, message } from "antd";
+import { Form, Input, Button, Typography } from "antd";
 import { LockOutlined } from "@ant-design/icons";
 import bg from "../assets/fpw.png";
 import { passwordFieldValidation } from "../helpers/PasswordValidation";
