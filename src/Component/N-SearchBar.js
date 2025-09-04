@@ -1,14 +1,12 @@
 // src/Component/NavBar.jsx
-import React from "react";
 import { NavLink, Link, useNavigate } from "react-router-dom";
-import { useCart } from "../Component/CartContext";
 import { useNotification } from "../context/NotificationContext";
+import { useCart } from "./CartContext";
 
 export default function NavBar({ search = "", onSearchChange }) {
-  const { count } = useCart();
   const navigate = useNavigate();
   const { openNotification } = useNotification();
-
+  const { count } = useCart();
   const navLink = ({ isActive }) =>
     [
       "relative inline-flex items-center gap-2 px-3 py-1 rounded-lg",

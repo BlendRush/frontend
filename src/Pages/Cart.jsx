@@ -1,50 +1,140 @@
-// src/Pages/Cart.jsx
-import React from "react";
-import { Link, useNavigate } from "react-router-dom"; // <-- navigate after placing order
-import { useCart } from "../Component/CartContext";   // keep your path
+import { useEffect, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import BgImg from "../assets/CartBg.png";
+import { getLocalStoragedata } from "../helpers/Storage.js"; 
 
-const ORDERS_KEY = "orders:v1";
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
+const DELIVERY_FEE = 1;
+const TAX_RATE = 0;
 
 export default function Cart() {
-  const { items, count, subtotal, setQty, removeItem, clear } = useCart();
+  const [items, setItems] = useState([]);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // Fees / taxes / total
-  const DELIVERY_FEE = 1; // $1 as your UI shows (change as needed)
-  const TAX_RATE = 0;     // set to e.g. 0.08 for 8% estimate
+  const fetchCart = async () => {
+    setLoading(true);
+    try {
+      const token = getLocalStoragedata("token");
+      const res = await fetch("http://localhost:3000/api/carts/cart-items", {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      const data = await res.json();
+      if (res.ok) setItems(data);
+      else console.error(data.message);
+    } catch (error) {
+      console.error(error);
+    }
+    setLoading(false);
+  };
+
+  useEffect(() => {
+    fetchCart();
+  }, []);
+
+  // Update quantity
+  const setQty = async (itemId, quantity
+
+) => {
+    try {
+      const token = getLocalStoragedata("token");
+      await fetch(`http://localhost:3000/api/carts/cart-items/${itemId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ quantity: quantity
+
+ }),
+      });
+      setItems((prev) =>
+        prev.map((i) => (i.itemId === itemId ? { ...i, quantity
+
+ } : i))
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Remove item
+  const removeItem = async (itemId) => {
+    try {
+      const token = getLocalStoragedata("token");
+      await fetch(`http://localhost:3000/api/carts/cart-items/${itemId}`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setItems((prev) => prev.filter((i) => i.itemId !== itemId));
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Clear cart
+  const clearCart = async () => {
+    try {
+      const token = getLocalStoragedata("token");
+      await fetch("http://localhost:3000/api/carts/cart-items/", {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      setItems([]);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  // Place order
+  const placeOrder = async () => {
+    if (!items.length) return;
+
+    const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
+
+ || 1), 0);
+    const tax = subtotal * TAX_RATE;
+    const total = subtotal + DELIVERY_FEE + tax;
+
+    try {
+      const token = getLocalStoragedata("token");
+      const res = await fetch("http://localhost:3000/api/orders", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          items,
+          subtotal,
+          delivery: DELIVERY_FEE,
+          tax,
+          total,
+        }),
+      });
+
+      if (!res.ok) throw new Error("Failed to place order");
+
+      setItems([]); // clear cart
+      navigate("/orders"); // navigate to orders page
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const count = items.reduce((sum, i) => sum + (i.quantity
+
+ || 1), 0);
+  const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
+
+ || 1), 0);
   const tax = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
-  const placeOrder = () => {
-    if (!items.length) return;
-
-    const order = {
-      id: `ORD-${Date.now()}`,
-      createdAt: new Date().toISOString(),
-      items: items.map(({ id, name, price, image, qty }) => ({ id, name, price, image, qty })),
-      subtotal,
-      delivery: DELIVERY_FEE,
-      tax,
-      total,
-    };
-
-    try {
-      const existing = JSON.parse(localStorage.getItem(ORDERS_KEY) || "[]");
-      existing.unshift(order); // newest first
-      localStorage.setItem(ORDERS_KEY, JSON.stringify(existing));
-    } catch {
-      // ignore storage errors
-    }
-
-    clear(); // empty the cart after saving
-    navigate("/orders", { state: { lastOrderId: order.id } });
-  };
+  console.log(items)
 
   return (
     <div className="min-h-screen pt-28 relative">
-      {/* Background image */}
       <div
         className="absolute inset-0 -z-10"
         style={{
@@ -53,20 +143,18 @@ export default function Cart() {
           backgroundPosition: "center",
         }}
       />
-      {/* Readability overlay */}
       <div className="absolute inset-0 -z-10 bg-white/50" />
 
-      {/* Page content */}
       <div className="mx-auto max-w-6xl px-4 pb-24">
-        <h1
-          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
-                     bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500
-                     bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]"
-        >
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
+                       bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500
+                       bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]">
           Your Cart
         </h1>
 
-        {items.length === 0 ? (
+        {loading ? (
+          <div className="mt-6 text-center">Loading...</div>
+        ) : items.length === 0 ? (
           <div className="mt-6 mx-auto max-w-3xl">
             <div className="rounded-xl border bg-green-200 p-6 text-center">
               <p className="text-slate-600">Your cart is empty.</p>
@@ -80,7 +168,6 @@ export default function Cart() {
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
-            {/* Left: Items */}
             <div className="lg:col-span-2">
               <ul className="divide-y divide-slate-200 rounded-xl border bg-white">
                 {items.map((i) => (
@@ -90,53 +177,51 @@ export default function Cart() {
                       alt={i.name}
                       className="w-16 h-16 rounded-lg object-cover ring-1 ring-slate-200"
                     />
-
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <h3 className="font-medium text-slate-900 truncate">{i.name}</h3>
                           <div className="text-sm text-slate-600">{formatCurrency(i.price)} each</div>
                         </div>
+                        <div className="text-right font-semibold text-emerald-700">
+                          {formatCurrency((i.price || 0) * (i.quantity
 
-                        {/* Line total */}
-                        <div className="text-right">
-                          <div className="font-semibold text-emerald-700">
-                            {formatCurrency((i.price || 0) * (i.qty || 0))}
-                          </div>
+ || 0))}
                         </div>
                       </div>
 
-                      {/* Qty controls */}
                       <div className="mt-3 flex items-center gap-2">
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.id, Math.max(1, (i.qty || 0) - 1))}
-                          aria-label="Decrease quantity"
+                          onClick={() => setQty(i.itemId, Math.max(1, (i.quantity
+
+ || 0) - 1))}
                         >
                           −
                         </button>
                         <input
                           type="number"
                           min={1}
-                          value={i.qty}
+                          value={i.quantity
+
+}
                           onChange={(e) => {
                             const v = parseInt(e.target.value, 10);
                             setQty(i.id, Number.isNaN(v) || v < 1 ? 1 : v);
                           }}
                           className="h-8 w-14 rounded-lg border text-center"
-                          aria-label="Quantity"
                         />
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.id, (i.qty || 0) + 1)}
-                          aria-label="Increase quantity"
+                          onClick={() => setQty(i.itemId, (i.quantity
+
+ || 0) + 1)}
                         >
                           +
                         </button>
-
                         <button
                           className="ml-3 text-sm text-emerald-700 hover:underline"
-                          onClick={() => removeItem(i.id)}
+                          onClick={() => removeItem(i.itemId)}
                         >
                           Remove
                         </button>
@@ -155,14 +240,13 @@ export default function Cart() {
                 </Link>
                 <button
                   className="inline-flex items-center rounded-lg bg-red-500 border px-3 py-2 text-sm text-white hover:bg-red-900"
-                  onClick={clear}
+                  onClick={clearCart}
                 >
                   Clear cart
                 </button>
               </div>
             </div>
 
-            {/* Right: Summary */}
             <aside className="lg:col-span-1">
               <div className="rounded-xl border bg-gray-100 p-5">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
@@ -174,24 +258,10 @@ export default function Cart() {
                 </h2>
 
                 <dl className="mt-4 space-y-2 text-sm">
-                  <div className="flex items-center justify-between">
-                    <dt>Items</dt>
-                    <dd className="text-slate-900">{count}</dd>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <dt>Subtotal</dt>
-                    <dd className="font-medium text-slate-900">{formatCurrency(subtotal)}</dd>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-700">
-                    <dt>Delivery</dt>
-                    <dd>{formatCurrency(DELIVERY_FEE)}</dd>
-                  </div>
-                  <div className="flex items-center justify-between text-slate-600">
-                    <dt>Tax</dt>
-                    <dd>{TAX_RATE ? formatCurrency(tax) : "Calculated at checkout"}</dd>
-                  </div>
-
-                  {/* Total */}
+                  <div className="flex items-center justify-between"><dt>Items</dt><dd className="text-slate-900">{count}</dd></div>
+                  <div className="flex items-center justify-between"><dt>Subtotal</dt><dd className="font-medium text-slate-900">{formatCurrency(subtotal)}</dd></div>
+                  <div className="flex items-center justify-between text-slate-700"><dt>Delivery</dt><dd>{formatCurrency(DELIVERY_FEE)}</dd></div>
+                  <div className="flex items-center justify-between text-slate-600"><dt>Tax</dt><dd>{TAX_RATE ? formatCurrency(tax) : "Calculated at checkout"}</dd></div>
                   <div className="border-t pt-3 mt-3 flex items-center justify-between text-base">
                     <dt className="font-bold text-slate-900">Total</dt>
                     <dd className="font-bold text-slate-900">{formatCurrency(total)}</dd>
