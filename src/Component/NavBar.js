@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 import Button from "../Component/Button";
+import { useNavigate } from "react-router-dom";
 
 // tiny inline icons (no extra assets)
 const HomeIcon = ({ className = "" }) => (
@@ -17,6 +18,7 @@ const MenuIcon = ({ className = "" }) => (
 );
 
 export default function NavBar() {
+  const navigate = useNavigate();
   const base =
     "group relative inline-flex items-center gap-2 px-3 py-1 rounded-lg " +
     "text-[15px] font-semibold tracking-wide transition-colors";
@@ -72,10 +74,10 @@ export default function NavBar() {
 
           {/* Actions */}
           <div className="flex items-center gap-3">
-            <Button as="a" href="/sign-in" className="text-sm bg-emerald-600/70 text-slate-800 hover:bg-emerald-600">
+            <Button as="a" onClick={() => navigate("/sign-in")} className="text-sm bg-emerald-600/70 text-slate-800 hover:bg-emerald-600">
               Login
             </Button>
-            <Button as="a" href="/register" className="text-sm bg-emerald-500 text-white hover:bg-emerald-600">
+            <Button as="a" onClick={() => navigate("/register")} className="text-sm bg-emerald-500 text-white hover:bg-emerald-600">
               Sign Up
             </Button>
           </div>
