@@ -16,7 +16,7 @@ const ForgotPW = () => {
   const navigate = useNavigate();
   const { openNotification } = useNotification();
 
-const handleSubmit = async (values) => {
+  const handleSubmit = async (values) => {
     setIsLoading(true);
     try {
       const response = await axios.post(
@@ -56,7 +56,7 @@ const handleSubmit = async (values) => {
 
   useEffect(() => {
     handleFormChange();
-  }, []);
+  });
 
   return (
     <div
@@ -79,7 +79,7 @@ const handleSubmit = async (values) => {
 
           {/* Form */}
           <div className="flex flex-col items-center w-full">
-             <Form
+            <Form
               form={form}
               layout="vertical"
               className="w-[380px] sm:w-[400px]"
