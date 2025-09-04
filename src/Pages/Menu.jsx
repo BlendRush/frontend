@@ -12,7 +12,9 @@ const formatCurrency = (n) => `$${n.toFixed(2)}`;
 export default function MenuPage() {
   const [category, setCategory] = useState(null);
   const [search, setSearch] = useState("");
-  const [activeTags, setActiveTags] = useState([]);
+  // const [activeTags, setActiveTags] = useState([]);
+  const [activeTags] = useState([]);
+
   const [sortBy, setSortBy] = useState("popular");
   const [loading, setLoading] = useState(false);
   const [items, setItems] = useState([]);
