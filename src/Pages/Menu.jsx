@@ -185,7 +185,7 @@ export default function MenuPage() {
             <div className="flex-1">
               <h1 className="text-2xl md:text-3xl font-semibold">Our Menu</h1>
               <p className="mt-1 text-emerald-50">
-                Choose your vibe: green, fruity, protein-packed—it's all here.
+                Choose your vibe: green, fruity, protein-packed-it's all here.
               </p>
             </div>
             <img
