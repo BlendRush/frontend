@@ -36,7 +36,7 @@ export default function About() {
         <p className="mt-10 text-slate-700">
           blendRUSH is a small, quality-obsessed juice bar focused on fresh
           smoothies, cold-pressed juices, and nourishing bowls. We keep it
-          simple: real fruit, real flavor, blended to order—fast.
+          simple: real fruit, real flavor, blended to order-fast.
         </p>
 
         <p className="mt-3 text-slate-700">
@@ -49,7 +49,7 @@ export default function About() {
           What we stand for
         </h2>
         <ul className="mt-2 list-disc pl-5 text-slate-700 space-y-1">
-          <li>100% natural ingredients—whole fruit and greens</li>
+          <li>100% natural ingredients-whole fruit and greens</li>
           <li>No added sugar or syrups; sweetness comes from fruit</li>
           <li>Made-to-order for peak freshness and flavor</li>
           <li>Eco-conscious packaging where possible</li>

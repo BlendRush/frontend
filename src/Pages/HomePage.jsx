@@ -48,11 +48,11 @@ export default function HomePage() {
             style={{ fontFamily: "Merienda, cursive" }}
           >
             BlendRush is your neighborhood juice bar for fresh, made-to-order
-            blends. We press real fruit and veggies—no syrups, no fuss—so you
+            blends. We press real fruit and veggies-no syrups, no fuss-so you
             get crisp flavors, clean energy, and feel-good sips every time. Grab
             a post-workout refuel, a midday pick-me-up, or a cleanse pack for
             the week. Fast service, recyclable cups, and a team that knows your
-            go-to—because better choices should be easy and delicious.
+            go-to-because better choices should be easy and delicious.
           </p>
 
           {/* Order Now Button */}
