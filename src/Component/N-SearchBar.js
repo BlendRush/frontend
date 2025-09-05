@@ -36,7 +36,7 @@ export default function NavBar({ search = "", onSearchChange }) {
     <header className="fixed inset-x-0 top-0 z-50">
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/30 bg-white/40 px-5 py-3 backdrop-blur-md shadow-sm">
-          <Link to="/home" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
               bR
             </span>
@@ -209,7 +209,7 @@ export default function NavBar({ search = "", onSearchChange }) {
           <div className="md:hidden mt-3 flex flex-col gap-3 rounded-xl bg-white/95 p-4 shadow-lg">
             {/* Links */}
             <NavLink
-              to="/home"
+              to="/"
               className={navLink}
               onClick={() => setMobileOpen(false)}
             >
