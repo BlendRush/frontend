@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
 import { getLocalStoragedata } from "../helpers/Storage";
 
 const CartContext = createContext();
@@ -8,7 +8,7 @@ export function CartProvider({ children }) {
   const serviceURL = process.env.REACT_APP_API_URL;
   const token = getLocalStoragedata("token");
 
-  const fetchCart = async () => {
+  const fetchCart = useCallback(async () => {
     try {
       const res = await fetch(`${serviceURL}carts/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
@@ -18,11 +18,11 @@ export function CartProvider({ children }) {
     } catch (err) {
       console.error(err);
     }
-  };
+  }, [serviceURL, token]);
 
   useEffect(() => {
     fetchCart();
-  }, [token]);
+  }, [fetchCart]);
 
   const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
 
