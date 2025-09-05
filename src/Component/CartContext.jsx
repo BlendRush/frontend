@@ -22,7 +22,7 @@ export function CartProvider({ children }) {
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  });
 
   const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
 

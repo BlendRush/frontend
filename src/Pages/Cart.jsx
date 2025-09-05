@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BgImg from "../assets/CartBg.png";
-import { getLocalStoragedata } from "../helpers/Storage.js"; 
+import { getLocalStoragedata } from "../helpers/Storage.js";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 const DELIVERY_FEE = 1;
@@ -31,12 +31,12 @@ export default function Cart() {
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  });
 
   // Update quantity
   const setQty = async (itemId, quantity
 
-) => {
+  ) => {
     try {
       const token = getLocalStoragedata("token");
       await fetch(`${serviceURL}carts/cart-items/${itemId}`, {
@@ -45,14 +45,16 @@ export default function Cart() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ quantity: quantity
+        body: JSON.stringify({
+          quantity: quantity
 
- }),
+        }),
       });
       setItems((prev) =>
-        prev.map((i) => (i.itemId === itemId ? { ...i, quantity
+        prev.map((i) => (i.itemId === itemId ? {
+          ...i, quantity
 
- } : i))
+        } : i))
       );
     } catch (error) {
       console.error(error);
@@ -93,7 +95,7 @@ export default function Cart() {
 
     const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
 
- || 1), 0);
+      || 1), 0);
     const tax = subtotal * TAX_RATE;
     const total = subtotal + DELIVERY_FEE + tax;
 
@@ -125,10 +127,10 @@ export default function Cart() {
 
   const count = items.reduce((sum, i) => sum + (i.quantity
 
- || 1), 0);
+    || 1), 0);
   const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
 
- || 1), 0);
+    || 1), 0);
   const tax = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
@@ -187,7 +189,7 @@ export default function Cart() {
                         <div className="text-right font-semibold text-emerald-700">
                           {formatCurrency((i.price || 0) * (i.quantity
 
- || 0))}
+                            || 0))}
                         </div>
                       </div>
 
@@ -196,7 +198,7 @@ export default function Cart() {
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
                           onClick={() => setQty(i.itemId, Math.max(1, (i.quantity
 
- || 0) - 1))}
+                            || 0) - 1))}
                         >
                           −
                         </button>
@@ -205,7 +207,7 @@ export default function Cart() {
                           min={1}
                           value={i.quantity
 
-}
+                          }
                           onChange={(e) => {
                             const v = parseInt(e.target.value, 10);
                             setQty(i.id, Number.isNaN(v) || v < 1 ? 1 : v);
@@ -216,7 +218,7 @@ export default function Cart() {
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
                           onClick={() => setQty(i.itemId, (i.quantity
 
- || 0) + 1)}
+                            || 0) + 1)}
                         >
                           +
                         </button>
