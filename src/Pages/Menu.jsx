@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useCallback } from "react";
 import NavSearchBar from "../Component/N-SearchBar.js";
 import BannerImg from "../assets/Banner.png";
 import BgImg from "../assets/MBg.png";
@@ -6,6 +6,7 @@ import { getMenuService } from "../services/MenuService.jsx";
 import { getLocalStoragedata } from "../helpers/Storage.js";
 import { useNotification } from "../context/NotificationContext.jsx";
 import { useCart } from "../Component/CartContext.jsx";
+import NavBar from "../Component/NavBar.js";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
@@ -21,14 +22,41 @@ export default function MenuPage() {
   const [categories, setCategories] = useState([]);
   const { openNotification } = useNotification();
   const serviceURL = process.env.REACT_APP_API_URL;
+  const token = getLocalStoragedata("token");
   const { fetchCart } = useCart();
 
-  useEffect(() => {
-    fetchMenuItemData();
-    fetchCart();
-  }, []);
+  // useEffect(() => {
+  //   fetchMenuItemData();
+  // }, [token]);
 
-  const fetchMenuItemData = async () => {
+  useEffect(() => {
+    fetchCart();
+  }, [fetchCart]);
+
+  // const fetchMenuItemData = async () => {
+  //   setLoading(true);
+  //   const response = await getMenuService();
+
+  //   if (response.success) {
+  //     setItems(response.data);
+
+  //     const uniqueCats = [...new Set(response.data.map((it) => it.category))];
+  //     setCategories(["All", ...uniqueCats]);
+
+  //     if (!category) {
+  //       setCategory("All");
+  //     }
+  //     if (uniqueCats.length && !category) {
+  //       setCategory(uniqueCats[0]);
+  //     }
+  //   } else {
+  //     console.log("Error:", response.message);
+  //   }
+
+  //   setLoading(false);
+  // };
+
+  const fetchMenuItemData = useCallback(async () => {
     setLoading(true);
     const response = await getMenuService();
 
@@ -49,7 +77,11 @@ export default function MenuPage() {
     }
 
     setLoading(false);
-  };
+  }, [category]); // depends on category because you use it
+
+  useEffect(() => {
+    fetchMenuItemData();
+  }, [fetchMenuItemData]);
 
   const filtered = useMemo(() => {
     if (!category) return [];
@@ -57,8 +89,8 @@ export default function MenuPage() {
     let list =
       category && category !== "All"
         ? items.filter(
-            (it) => it.category?.toLowerCase() === category.toLowerCase()
-          )
+          (it) => it.category?.toLowerCase() === category.toLowerCase()
+        )
         : [...items];
 
     if (search.trim()) {
@@ -142,7 +174,11 @@ export default function MenuPage() {
 
       {/* Main content */}
       <div className="relative">
-        <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
+        {token ? (
+          <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
+        ) : (
+          <NavBar />
+        )}
         <main id="menu" className="mx-auto max-w-6xl px-4 pb-24">
           {/* Hero */}
           <section className="mt-8 rounded-2xl bg-emerald-600/90 text-white p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
@@ -167,11 +203,10 @@ export default function MenuPage() {
                   <button
                     key={c}
                     onClick={() => setCategory(c)}
-                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
-                      c === category
-                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                    }`}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${c === category
+                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                      }`}
                   >
                     {c}
                   </button>
@@ -259,12 +294,14 @@ export default function MenuPage() {
                     </div>
 
                     <div className="mt-3 flex items-center justify-between">
-                      <button
-                        onClick={() => handleAdd(item)}
-                        className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
-                      >
-                        Add
-                      </button>
+                      {token && (
+                        <button
+                          onClick={() => handleAdd(item)}
+                          className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
+                        >
+                          Add
+                        </button>
+                      )}
 
                       <details>
                         <summary className="cursor-pointer text-sm text-emerald-700 hover:underline">

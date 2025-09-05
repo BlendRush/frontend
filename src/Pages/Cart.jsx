@@ -33,7 +33,7 @@ export default function Cart() {
 
   useEffect(() => {
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
   // Update quantity
   const setQty = async (itemId, quantity) => {

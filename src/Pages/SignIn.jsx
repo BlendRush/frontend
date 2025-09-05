@@ -1,5 +1,4 @@
-// src/Pages/SignIn.jsx
-import React, { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Button, Typography, Checkbox } from "antd";
 import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
@@ -70,6 +69,23 @@ export default function SignIn() {
       className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
       style={{ backgroundImage: `url(${signupBg})` }}
     >
+      <div className="absolute top-6 left-64">
+        <Button
+          type="link"
+          className="!text-white !font-semibold"
+          onClick={() => navigate("/")}
+        >
+          <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
+            bR
+          </span>
+          <div className="leading-tight">
+            <div className="text-base font-extrabold tracking-tight text-emerald-600">
+              blend<span className="text-slate-800">RUSH</span>
+            </div>
+          </div>
+        </Button>
+      </div>
+
       {/* CARD */}
       <div
         className="

@@ -1,5 +1,4 @@
-// src/Pages/Register.jsx
-import React, { useRef, useState, useEffect, useContext } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Checkbox, Button, Typography, Modal } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
@@ -37,6 +36,7 @@ export default function Register() {
         }
       }, 0);
     }
+    
   }, [modalVisible, form]);
 
   const handleScroll = () => {
@@ -90,11 +90,26 @@ export default function Register() {
       className="relative min-h-screen bg-cover bg-center flex items-center justify-center"
       style={{ backgroundImage: `url(${signupBg})` }}
     >
-      {/* CARD — centered, then nudged DOWN to sit inside the monitor */}
+      <div className="absolute top-6 left-64">
+        <Button
+          type="link"
+          className="!text-white !font-semibold"
+          onClick={() => navigate("/")}
+        >
+          <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
+            bR
+          </span>
+          <div className="leading-tight">
+            <div className="text-base font-extrabold tracking-tight text-emerald-600">
+              blend<span className="text-slate-800">RUSH</span>
+            </div>
+          </div>
+        </Button>
+      </div>
       <div
         className="
           bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
-          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[460px]
+          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[360px]
           
         "
       >
