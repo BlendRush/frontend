@@ -27,8 +27,11 @@ export default function MenuPage() {
 
   useEffect(() => {
     fetchMenuItemData();
+  }, [token]);
+
+  useEffect(() => {
     fetchCart();
-  },[fetchCart,token]);
+  }, [token]);
 
   const fetchMenuItemData = async () => {
     setLoading(true);
@@ -59,8 +62,8 @@ export default function MenuPage() {
     let list =
       category && category !== "All"
         ? items.filter(
-          (it) => it.category?.toLowerCase() === category.toLowerCase()
-        )
+            (it) => it.category?.toLowerCase() === category.toLowerCase()
+          )
         : [...items];
 
     if (search.trim()) {
@@ -173,10 +176,11 @@ export default function MenuPage() {
                   <button
                     key={c}
                     onClick={() => setCategory(c)}
-                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${c === category
-                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
+                      c === category
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     {c}
                   </button>
