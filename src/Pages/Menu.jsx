@@ -28,7 +28,7 @@ export default function MenuPage() {
   useEffect(() => {
     fetchMenuItemData();
     fetchCart();
-  });
+  },[fetchCart,token]);
 
   const fetchMenuItemData = async () => {
     setLoading(true);

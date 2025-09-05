@@ -11,6 +11,7 @@ export default function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const token = getLocalStoragedata("token");
   const serviceURL = process.env.REACT_APP_API_URL;
 
   const fetchCart = async () => {
@@ -31,12 +32,10 @@ export default function Cart() {
 
   useEffect(() => {
     fetchCart();
-  });
+  }, [token]);
 
   // Update quantity
-  const setQty = async (itemId, quantity
-
-  ) => {
+  const setQty = async (itemId, quantity) => {
     try {
       const token = getLocalStoragedata("token");
       await fetch(`${serviceURL}carts/cart-items/${itemId}`, {
@@ -46,15 +45,18 @@ export default function Cart() {
           Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          quantity: quantity
-
+          quantity: quantity,
         }),
       });
       setItems((prev) =>
-        prev.map((i) => (i.itemId === itemId ? {
-          ...i, quantity
-
-        } : i))
+        prev.map((i) =>
+          i.itemId === itemId
+            ? {
+                ...i,
+                quantity,
+              }
+            : i
+        )
       );
     } catch (error) {
       console.error(error);
@@ -93,9 +95,10 @@ export default function Cart() {
   const placeOrder = async () => {
     if (!items.length) return;
 
-    const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
-
-      || 1), 0);
+    const subtotal = items.reduce(
+      (sum, i) => sum + i.price * (i.quantity || 1),
+      0
+    );
     const tax = subtotal * TAX_RATE;
     const total = subtotal + DELIVERY_FEE + tax;
 
@@ -125,16 +128,15 @@ export default function Cart() {
     }
   };
 
-  const count = items.reduce((sum, i) => sum + (i.quantity
-
-    || 1), 0);
-  const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
-
-    || 1), 0);
+  const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+  const subtotal = items.reduce(
+    (sum, i) => sum + i.price * (i.quantity || 1),
+    0
+  );
   const tax = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
-  console.log(items)
+  console.log(items);
 
   return (
     <div className="min-h-screen pt-28 relative">
@@ -149,9 +151,11 @@ export default function Cart() {
       <div className="absolute inset-0 -z-10 bg-white/50" />
 
       <div className="mx-auto max-w-6xl px-4 pb-24">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
+        <h1
+          className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
                        bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500
-                       bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]">
+                       bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]"
+        >
           Your Cart
         </h1>
 
@@ -183,31 +187,31 @@ export default function Cart() {
                     <div className="flex-1 min-w-0">
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <h3 className="font-medium text-slate-900 truncate">{i.name}</h3>
-                          <div className="text-sm text-slate-600">{formatCurrency(i.price)} each</div>
+                          <h3 className="font-medium text-slate-900 truncate">
+                            {i.name}
+                          </h3>
+                          <div className="text-sm text-slate-600">
+                            {formatCurrency(i.price)} each
+                          </div>
                         </div>
                         <div className="text-right font-semibold text-emerald-700">
-                          {formatCurrency((i.price || 0) * (i.quantity
-
-                            || 0))}
+                          {formatCurrency((i.price || 0) * (i.quantity || 0))}
                         </div>
                       </div>
 
                       <div className="mt-3 flex items-center gap-2">
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.itemId, Math.max(1, (i.quantity
-
-                            || 0) - 1))}
+                          onClick={() =>
+                            setQty(i.itemId, Math.max(1, (i.quantity || 0) - 1))
+                          }
                         >
                           −
                         </button>
                         <input
                           type="number"
                           min={1}
-                          value={i.quantity
-
-                          }
+                          value={i.quantity}
                           onChange={(e) => {
                             const v = parseInt(e.target.value, 10);
                             setQty(i.id, Number.isNaN(v) || v < 1 ? 1 : v);
@@ -216,9 +220,9 @@ export default function Cart() {
                         />
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.itemId, (i.quantity
-
-                            || 0) + 1)}
+                          onClick={() =>
+                            setQty(i.itemId, (i.quantity || 0) + 1)
+                          }
                         >
                           +
                         </button>
@@ -253,7 +257,14 @@ export default function Cart() {
             <aside className="lg:col-span-1">
               <div className="rounded-xl border bg-gray-100 p-5">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
-                  <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-emerald-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    className="h-5 w-5 text-emerald-600"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                  >
                     <path d="M6 6h15l-1.5 9h-12z" />
                     <path d="M6 6l-1-3H2" />
                   </svg>
@@ -261,13 +272,33 @@ export default function Cart() {
                 </h2>
 
                 <dl className="mt-4 space-y-2 text-sm">
-                  <div className="flex items-center justify-between"><dt>Items</dt><dd className="text-slate-900">{count}</dd></div>
-                  <div className="flex items-center justify-between"><dt>Subtotal</dt><dd className="font-medium text-slate-900">{formatCurrency(subtotal)}</dd></div>
-                  <div className="flex items-center justify-between text-slate-700"><dt>Delivery</dt><dd>{formatCurrency(DELIVERY_FEE)}</dd></div>
-                  <div className="flex items-center justify-between text-slate-600"><dt>Tax</dt><dd>{TAX_RATE ? formatCurrency(tax) : "Calculated at checkout"}</dd></div>
+                  <div className="flex items-center justify-between">
+                    <dt>Items</dt>
+                    <dd className="text-slate-900">{count}</dd>
+                  </div>
+                  <div className="flex items-center justify-between">
+                    <dt>Subtotal</dt>
+                    <dd className="font-medium text-slate-900">
+                      {formatCurrency(subtotal)}
+                    </dd>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-700">
+                    <dt>Delivery</dt>
+                    <dd>{formatCurrency(DELIVERY_FEE)}</dd>
+                  </div>
+                  <div className="flex items-center justify-between text-slate-600">
+                    <dt>Tax</dt>
+                    <dd>
+                      {TAX_RATE
+                        ? formatCurrency(tax)
+                        : "Calculated at checkout"}
+                    </dd>
+                  </div>
                   <div className="border-t pt-3 mt-3 flex items-center justify-between text-base">
                     <dt className="font-bold text-slate-900">Total</dt>
-                    <dd className="font-bold text-slate-900">{formatCurrency(total)}</dd>
+                    <dd className="font-bold text-slate-900">
+                      {formatCurrency(total)}
+                    </dd>
                   </div>
                 </dl>
 
