@@ -13,6 +13,7 @@ export default function About() {
           backgroundPosition: "center",
         }}
       />
+
       {/* Soft overlay for readability */}
       <div className="absolute inset-0 -z-10 bg-white/70 backdrop-blur-[1px]" />
 
