@@ -36,6 +36,7 @@ export default function Register() {
         }
       }, 0);
     }
+    
   }, [modalVisible, form]);
 
   const handleScroll = () => {
