@@ -1,11 +1,29 @@
-// src/Pages/HomePage.jsx
+import { useState } from "react";
 import NavBar from "../Component/NavBar";
 import homeBg from "../assets/home-bg.png";
+import NavSearchBar from "../Component/N-SearchBar.js";
+import { getLocalStoragedata } from "../helpers/Storage.js";
+import { useNavigate } from "react-router-dom";
 
 export default function HomePage() {
+  const [search, setSearch] = useState("");
+  const navigate = useNavigate();
+  const token = getLocalStoragedata("token");
+  const handleClick = () => {
+    if (token) {
+      navigate("/menu");
+    } else {
+      navigate("/sign-in");
+    }
+  };
+
   return (
     <>
-      <NavBar />
+      {token ? (
+        <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
+      ) : (
+        <NavBar />
+      )}
 
       {/* Background section */}
       <div
@@ -28,21 +46,21 @@ export default function HomePage() {
             className="mt-4 text-green-800 text-lg"
             style={{ fontFamily: "Merienda, cursive" }}
           >
-            
-            BlendRush is your neighborhood juice bar for fresh, made-to-order 
-            blends. We press real fruit and veggies—no syrups, no fuss—so you 
-            get crisp flavors, clean energy, and feel-good sips every time. 
-            Grab a post-workout refuel, a midday pick-me-up, or a cleanse pack 
-            for the week. Fast service, recyclable cups, and a team that knows 
-            your go-to—because better choices should be easy and delicious.
+            BlendRush is your neighborhood juice bar for fresh, made-to-order
+            blends. We press real fruit and veggies—no syrups, no fuss—so you
+            get crisp flavors, clean energy, and feel-good sips every time. Grab
+            a post-workout refuel, a midday pick-me-up, or a cleanse pack for
+            the week. Fast service, recyclable cups, and a team that knows your
+            go-to—because better choices should be easy and delicious.
           </p>
 
           {/* Order Now Button */}
           <button
+            onClick={handleClick}
             className="mt-6 px-6 py-3 rounded-full bg-green-700 text-white font-semibold text-lg shadow-md hover:bg-green-400 transition"
             style={{ fontFamily: "Merienda, cursive" }}
           >
-            Order Now
+            {!token ? "Order Now" : "Continue Shopping"}
           </button>
         </div>
       </div>
