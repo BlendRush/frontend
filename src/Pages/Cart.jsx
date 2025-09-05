@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BgImg from "../assets/CartBg.png";
 import { getLocalStoragedata } from "../helpers/Storage.js";
@@ -11,10 +11,30 @@ export default function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-  const token = getLocalStoragedata("token");
+  // const token = getLocalStoragedata("token");
   const serviceURL = process.env.REACT_APP_API_URL;
 
-  const fetchCart = async () => {
+  // const fetchCart = async () => {
+  //   setLoading(true);
+  //   try {
+  //     const token = getLocalStoragedata("token");
+  //     const res = await fetch(`${serviceURL}carts/cart-items`, {
+  //       headers: { Authorization: `Bearer ${token}` },
+  //     });
+  //     const data = await res.json();
+  //     if (res.ok) setItems(data);
+  //     else console.error(data.message);
+  //   } catch (error) {
+  //     console.error(error);
+  //   }
+  //   setLoading(false);
+  // };
+
+  // useEffect(() => {
+  //   fetchCart();
+  // }, [token]);
+
+  const fetchCart = useCallback(async () => {
     setLoading(true);
     try {
       const token = getLocalStoragedata("token");
@@ -28,11 +48,11 @@ export default function Cart() {
       console.error(error);
     }
     setLoading(false);
-  };
+  }, [serviceURL]);
 
   useEffect(() => {
     fetchCart();
-  }, [token]);
+  }, [fetchCart]);
 
   // Update quantity
   const setQty = async (itemId, quantity) => {
@@ -52,9 +72,9 @@ export default function Cart() {
         prev.map((i) =>
           i.itemId === itemId
             ? {
-                ...i,
-                quantity,
-              }
+              ...i,
+              quantity,
+            }
             : i
         )
       );
