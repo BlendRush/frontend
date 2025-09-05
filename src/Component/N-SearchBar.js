@@ -25,7 +25,7 @@ export default function NavBar({ search = "", onSearchChange }) {
     try {
       openNotification("success", "Logged out successfully");
       localStorage.clear();
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       openNotification("warning", "Logout failed. Please try again.");
@@ -48,7 +48,7 @@ export default function NavBar({ search = "", onSearchChange }) {
           </Link>
 
           <div className="hidden md:flex items-center gap-6">
-            <NavLink to="/home" className={navLink}>
+            <NavLink to="/" className={navLink}>
               <svg
                 className="h-4 w-4 text-emerald-600"
                 fill="none"
@@ -109,9 +109,8 @@ export default function NavBar({ search = "", onSearchChange }) {
               <Link
                 to="/cart"
                 className="relative grid place-items-center rounded-xl border border-white/30 bg-white/60 p-2 hover:bg-white/80 transition"
-                aria-label={`Cart${
-                  count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
-                }`}
+                aria-label={`Cart${count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"

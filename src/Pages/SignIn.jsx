@@ -38,6 +38,7 @@ export default function SignIn() {
         setToken(response.token);
         setLocalStorageData("token", response.token);
         setLocalStorageData("user", response.email);
+        setLocalStorageData("userID", response.userID);
         navigate("/menu", { replace: true });
       } else {
         openNotification(

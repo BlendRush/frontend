@@ -43,7 +43,7 @@ export default function NavBar() {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/30 bg-white/40 px-5 py-3 backdrop-blur-md shadow-sm">
           {/* Logo */}
-          <NavLink to="/home" className="flex items-center gap-2">
+          <NavLink to="/" className="flex items-center gap-2">
             <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
               bR
             </span>
@@ -57,10 +57,8 @@ export default function NavBar() {
           {/* Desktop Links */}
           <div className="hidden md:flex items-center gap-6">
             <NavLink
-              to="/home"
-              className={({ isActive }) =>
-                `${base} ${isActive ? active : inactive}`
-              }
+              to="/"
+              className={({ isActive }) => `${base} ${isActive ? active : inactive}`}
             >
               <HomeIcon className="text-emerald-600" />
               <span>Home</span>
