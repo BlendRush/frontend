@@ -1,5 +1,4 @@
-// src/Pages/Register.jsx
-import React, { useRef, useState, useEffect, useContext } from "react";
+import { useRef, useState, useEffect, useContext } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Checkbox, Button, Typography, Modal } from "antd";
 import { MailOutlined, LockOutlined } from "@ant-design/icons";
