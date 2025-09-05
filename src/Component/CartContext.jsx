@@ -6,10 +6,10 @@ const CartContext = createContext();
 export function CartProvider({ children }) {
   const [items, setItems] = useState([]);
   const serviceURL = process.env.REACT_APP_API_URL;
+  const token = getLocalStoragedata("token");
 
   const fetchCart = async () => {
     try {
-      const token = getLocalStoragedata("token");
       const res = await fetch(`${serviceURL}carts/cart-items`, {
         headers: { Authorization: `Bearer ${token}` },
       });
@@ -22,7 +22,7 @@ export function CartProvider({ children }) {
 
   useEffect(() => {
     fetchCart();
-  });
+  }, [token]);
 
   const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
 
