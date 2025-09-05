@@ -106,7 +106,7 @@ export default function About() {
             </div>
 
             <nav className="text-sm text-slate-700 flex flex-wrap gap-4">
-              <Link className="hover:text-slate-900" to="/home">
+              <Link className="hover:text-slate-900" to="">
                 Home
               </Link>
               <Link className="hover:text-slate-900" to="/menu">

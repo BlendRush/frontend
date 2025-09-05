@@ -93,7 +93,7 @@ export default function Register() {
         <Button
           type="link"
           className="!text-white !font-semibold"
-          onClick={() => navigate("/home")}
+          onClick={() => navigate("/")}
         >
           <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
             bR
