@@ -107,15 +107,11 @@ export default function Register() {
         </Button>
       </div>
       <div
-        className="
-          bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
-          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-44 h-[360px]
-          
-        "
+        className="p-6 w-[600px] max-w-[90vw] lg:-mt-14 xl:h-[400px] xl:-mt-16 bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur"
       >
-        <div className="flex flex-col items-center w-full gap-10">
+        <div className="flex flex-col items-center w-full">
           <Text
-            className="text-black text-3xl font-extrabold"
+            className="text-black text-2xl xl:text-3xl font-extrabold"
             style={{ fontFamily: "Merienda, cursive" }}
           >
             Register
@@ -131,13 +127,14 @@ export default function Register() {
         <Form
           layout="vertical"
           form={form}
-          className="w-full"
+          className="w-[300px] sm:w-[400px] xl:w-full mx-auto"
           onFinish={onFinish}
           requiredMark={false}
         >
           <Form.Item
             name="email"
             label="Email"
+            className="lg:mb-1 xl:mb-2"
             rules={[
               { required: true, message: "Email is required!" },
               { type: "email", message: "Email is invalid!" },
@@ -155,6 +152,7 @@ export default function Register() {
           <Form.Item
             name="password"
             label="Password"
+            className="mb-2"
             rules={[{ validator: passwordFieldValidation }]}
           >
             <Input.Password
@@ -186,7 +184,7 @@ export default function Register() {
             <Checkbox disabled={!form.getFieldValue("scrolledToBottom")}>
               I agree to the{" "}
               <span
-                className="text-textColorTwo cursor-pointer underline"
+                className="text-gray-300 cursor-pointer underline"
                 onClick={() => setModalVisible(true)}
               >
                 Terms & Privacy Policy
@@ -194,13 +192,13 @@ export default function Register() {
             </Checkbox>
           </Form.Item>
 
-          <Form.Item className="mb-3">
+          <Form.Item className="lg:-mt-4">
             <div className="flex justify-center">
               <Button
                 type="primary"
                 htmlType="submit"
                 className="
-    !w-full md:!w-[300px] !h-[45px] !text-base md:!text-lg
+    !w-full md:!w-[300px] md:!h-[45px] !text-base lg:!text-lg
     !rounded-full !text-white !font-bold
     !transition-all !duration-300 !ease-in-out
     !bg-gradient-to-r from-[#6EE7B7] via-[#3FBFA8] to-[#2CA58D]
@@ -215,7 +213,7 @@ export default function Register() {
           </Form.Item>
         </Form>
 
-        <div className="text-center text-sm md:text-base text-white-800 ">
+        <div className="text-center text-sm lg:text-base text-white-800 lg:-mt-4 xl:mt-12">
           Already have an account?{" "}
           <Link to="/sign-in" className="text- white-600 hover:underline">
             Sign In
@@ -271,4 +269,4 @@ export default function Register() {
       </Modal>
     </div>
   );
-}
+}  

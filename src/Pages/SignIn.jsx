@@ -1,14 +1,15 @@
-import { useContext, useState } from "react";
+// src/Pages/SignIn.jsx
+import React, { useContext, useState } from "react";
 import signupBg from "../assets/signup.png";
 import { Form, Input, Button, Typography, Checkbox } from "antd";
-import { MailOutlined, LockOutlined, GoogleOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
+import { MailOutlined, LockOutlined } from "@ant-design/icons";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../context/AuthContext";
 import { passwordFieldValidation } from "../helpers/PasswordValidation";
 import { setLocalStorageData } from "../helpers/Storage";
 import { userSignInService } from "../services/UserService";
 import { useNotification } from "../context/NotificationContext";
-
+import googleIcon from "../assets/google.png";
 const { Text } = Typography;
 
 export default function SignIn() {
@@ -69,31 +70,14 @@ export default function SignIn() {
       className="relative min-h-screen bg-cover bg-center flex flex-col items-center justify-center px-4"
       style={{ backgroundImage: `url(${signupBg})` }}
     >
-      <div className="absolute top-6 left-64">
-        <Button
-          type="link"
-          className="!text-white !font-semibold"
-          onClick={() => navigate("/")}
-        >
-          <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
-            bR
-          </span>
-          <div className="leading-tight">
-            <div className="text-base font-extrabold tracking-tight text-emerald-600">
-              blend<span className="text-slate-800">RUSH</span>
-            </div>
-          </div>
-        </Button>
-      </div>
-
       {/* CARD */}
       <div
         className="
-          bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur
-          p-6 sm:p-8 w-[600px] max-w-[90vw] -mt-24
+          bg-white/0 rounded-2xl shadow-xl ring-1  ring-black/5 backdrop-blur
+          p-6 sm:p-8 w-[600px] max-w-[90vw] 
         "
       >
-        <div className="flex flex-col -mt-6 items-center w-full -mb-8 gap-10">
+        <div className="flex flex-col -mt-6 items-center w-full -mb-8">
           <Text
             className="text-black text-3xl font-extrabold"
             style={{ fontFamily: "Merienda, cursive" }}
@@ -111,13 +95,14 @@ export default function SignIn() {
         <Form
           layout="vertical"
           form={form}
-          className="w-full mt-6"
+          className="w-[300px] sm:w-[400px] xl:w-full mx-auto mt-10"
           onFinish={onFinish}
           requiredMark={false}
         >
           <Form.Item
             name="email"
             label="Email"
+            className="lg:mb-1 xl:mb-2"
             rules={[
               { required: true, message: "Email is required!" },
               { type: "email", message: "Email is invalid!" },
@@ -134,6 +119,7 @@ export default function SignIn() {
           <Form.Item
             name="password"
             label="Password"
+            className="mb-2"
             rules={[{ validator: passwordFieldValidation }]}
           >
             <Input.Password
@@ -158,7 +144,7 @@ export default function SignIn() {
           </div>
 
           {/* Sign In */}
-          <Form.Item className="mb-3">
+          <Form.Item className="lg:-mt-4">
             <div className="flex justify-center">
               <Button
                 type="primary"
@@ -179,41 +165,31 @@ export default function SignIn() {
           </Form.Item>
 
           {/* Divider */}
-          <div className="flex items-center gap-3 my-3">
+          <div className="flex items-center">
             <div className="h-px flex-1 bg-gray-200" />
-            <span className="text-xs text-gray-500">or</span>
+            <span className="text-xs text-gray-900">or</span>
             <div className="h-px flex-1 bg-gray-200" />
           </div>
 
           {/* Google Sign-In */}
-          <div className="flex justify-center">
+          <div className="flex justify-center mt-2">
             <Button
               type="default"
               className="flex items-center gap-2 !px-5 !py-2 rounded-full"
               onClick={googleAuth}
             >
-              <GoogleOutlined />
+              <img src={googleIcon} alt="google icon" className="w-5 h-5" />
               Sign in with Google
             </Button>
           </div>
-        </Form>
-      </div>
 
-      {/* OUTSIDE the card: Sign Up CTA */}
-      <div className="mt-4 -mb-4 w-full flex justify-center">
-        <Button
-          type="default"
-          className="
-            !w-full md:!w-[300px] !h-[45px]
-            !rounded-full !font-bold
-            !text-emerald-700 !border-emerald-300
-            hover:!bg-emerald-50
-            bg-white/70 backdrop-blur-sm
-          "
-          onClick={() => navigate("/register")}
-        >
-          Create an account
-        </Button>
+          <div className="text-center text-sm lg:text-base text-white-800 mt-4">
+            Don’t have an account?{" "}
+            <Link to="/register" className="text- white-600 hover:underline">
+              Sign up
+            </Link>
+          </div>
+        </Form>
       </div>
     </div>
   );

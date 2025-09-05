@@ -1,7 +1,11 @@
 import { Link } from "react-router-dom";
 import AboutBg from "../assets/AboutBg.png";
+import NavSearchBar from "../Component/N-SearchBar.js";
+import { useState } from "react";
 
 export default function About() {
+  const [search, setSearch] = useState("");
+
   return (
     <div className="min-h-screen pt-28 relative">
       {/* Background image */}
@@ -16,6 +20,8 @@ export default function About() {
 
       {/* Soft overlay for readability */}
       <div className="absolute inset-0 -z-10 bg-white/70 backdrop-blur-[1px]" />
+
+      <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
 
       {/* Main content */}
       <main className="mx-auto max-w-3xl px-4 pb-16">

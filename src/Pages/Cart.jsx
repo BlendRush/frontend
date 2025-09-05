@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BgImg from "../assets/CartBg.png";
 import { getLocalStoragedata } from "../helpers/Storage.js";
+import { Spin } from "antd";
+import NavSearchBar from "../Component/N-SearchBar.js";
 import { placeOrderService } from "../services/orderService";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
@@ -13,6 +15,8 @@ export default function Cart() {
   const [loading, setLoading] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false); // Confirmation modal
   const navigate = useNavigate();
+  const [search, setSearch] = useState("");
+  const token = getLocalStoragedata("token");
   const serviceURL = process.env.REACT_APP_API_URL;
 
   const fetchCart = useCallback(async () => {
@@ -145,15 +149,28 @@ export default function Cart() {
       />
       <div className="absolute inset-0 -z-10 bg-white/50" />
 
-      <div className="mx-auto max-w-6xl px-4 pb-24">
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
-                       bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500
-                       bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]">
-          Your Cart
-        </h1>
+      <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
 
+      <div className="mx-auto max-w-6xl px-4 pb-24">
+        <div className="flex items-end justify-between gap-3 flex-wrap">
+          <h1
+            className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight
+                       bg-gradient-to-r from-emerald-700 via-emerald-600 to-emerald-500
+                       bg-clip-text text-transparent [text-shadow:0_1px_1px_rgba(16,185,129,0.25)]"
+          >
+            Your Cart
+          </h1>
+          <Link
+            to="/menu"
+            className="inline-flex items-center rounded-lg border bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-500"
+          >
+            ← Continue shopping
+          </Link>
+        </div>
         {loading ? (
-          <div className="mt-6 text-center">Loading...</div>
+          <div className="mt-6 text-center">
+            <Spin size="large" />
+          </div>
         ) : items.length === 0 ? (
           <div className="mt-6 mx-auto max-w-3xl">
             <div className="rounded-xl border bg-green-200 p-6 text-center">
@@ -224,13 +241,7 @@ export default function Cart() {
                 ))}
               </ul>
 
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <Link
-                  to="/menu"
-                  className="inline-flex items-center rounded-lg border bg-gray-800 px-3 py-2 text-sm text-white hover:bg-gray-500"
-                >
-                  ← Continue shopping
-                </Link>
+              <div className="mt-4 flex flex-wrap items-center justify-end gap-3">
                 <button
                   className="inline-flex items-center rounded-lg bg-red-500 border px-3 py-2 text-sm text-white hover:bg-red-900"
                   onClick={clearCart}

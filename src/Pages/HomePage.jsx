@@ -9,6 +9,7 @@ export default function HomePage() {
   const [search, setSearch] = useState("");
   const navigate = useNavigate();
   const token = getLocalStoragedata("token");
+
   const handleClick = () => {
     if (token) {
       navigate("/menu");
@@ -27,23 +28,23 @@ export default function HomePage() {
 
       {/* Background section */}
       <div
-        className="relative  min-h-screen bg-cover bg-center flex items-center justify-start"
+        className="relative min-h-screen bg-cover bg-center flex items-center justify-center md:justify-start"
         style={{ backgroundImage: `url(${homeBg})` }}
       >
         {/* Optional overlay */}
         <div className="absolute inset-0 bg-white/20" aria-hidden="true" />
 
         {/* Content */}
-        <div className="relative max-w-xl z-10 text-left ml-32 -translate-y-20">
+        <div className="relative z-10 max-w-2xl text-center md:text-left px-6 sm:px-10 md:ml-16 lg:ml-32 -translate-y-10 md:-translate-y-30">
           <h1
-            className="text-4xl md:text-5xl font-bold text-green-900 hover:animate-bounce hover:drop-shadow-[0_0_10px_#22c55e]"
+            className="text-3xl sm:text-4xl md:text-5xl font-bold text-green-900 hover:animate-bounce hover:drop-shadow-[0_0_10px_#22c55e]"
             style={{ fontFamily: "Merienda, cursive" }}
           >
             Welcome to blendRUSH
           </h1>
 
           <p
-            className="mt-4 text-green-800 text-lg"
+            className="mt-4 text-green-800 text-base sm:text-lg leading-relaxed"
             style={{ fontFamily: "Merienda, cursive" }}
           >
             BlendRush is your neighborhood juice bar for fresh, made-to-order
@@ -57,7 +58,7 @@ export default function HomePage() {
           {/* Order Now Button */}
           <button
             onClick={handleClick}
-            className="mt-6 px-6 py-3 rounded-full bg-green-700 text-white font-semibold text-lg shadow-md hover:bg-green-400 transition"
+            className="mt-6 px-6 py-3 rounded-full bg-green-700 text-white font-semibold text-base sm:text-lg shadow-md hover:bg-green-400 transition"
             style={{ fontFamily: "Merienda, cursive" }}
           >
             {!token ? "Order Now" : "Continue Shopping"}
