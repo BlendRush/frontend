@@ -73,7 +73,7 @@ export default function SignIn() {
       {/* CARD */}
       <div
         className="
-          bg-white/0 rounded-2xl shadow-xl ring-1 xl:h-[800px] ring-black/5 backdrop-blur
+          bg-white/0 rounded-2xl shadow-xl ring-1  ring-black/5 backdrop-blur
           p-6 sm:p-8 w-[600px] max-w-[90vw] 
         "
       >
