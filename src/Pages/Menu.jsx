@@ -89,8 +89,8 @@ export default function MenuPage() {
     let list =
       category && category !== "All"
         ? items.filter(
-          (it) => it.category?.toLowerCase() === category.toLowerCase()
-        )
+            (it) => it.category?.toLowerCase() === category.toLowerCase()
+          )
         : [...items];
 
     if (search.trim()) {
@@ -203,10 +203,11 @@ export default function MenuPage() {
                   <button
                     key={c}
                     onClick={() => setCategory(c)}
-                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${c === category
-                      ? "bg-emerald-600 text-white border-emerald-600 shadow"
-                      : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
-                      }`}
+                    className={`rounded-xl px-4 py-2 text-sm font-medium transition-all border ${
+                      c === category
+                        ? "bg-emerald-600 text-white border-emerald-600 shadow"
+                        : "bg-white text-gray-700 border-gray-300 hover:bg-gray-50"
+                    }`}
                   >
                     {c}
                   </button>
@@ -316,9 +317,28 @@ export default function MenuPage() {
                 </article>
               ))
             ) : (
-              <p className="col-span-full text-center text-gray-500 py-10">
-                No items found.
-              </p>
+              <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+                <svg
+                  className="w-16 h-16 mb-4 text-gray-300"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M9 17v-6h6v6m2 4H7a2 2 0 01-2-2V7a2 2 0 012-2h5l2 2h5a2 2 0 012 2v12a2 2 0 01-2 2z"
+                  />
+                </svg>
+                <h2 className="text-xl font-semibold text-gray-700 mb-2">
+                  No items found
+                </h2>
+                <p className="text-gray-400">
+                  Try adjusting your filters or check back later.
+                </p>
+              </div>
             )}
           </section>
         </main>
