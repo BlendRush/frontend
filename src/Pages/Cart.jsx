@@ -13,10 +13,9 @@ const TAX_RATE = 0;
 export default function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [showConfirm, setShowConfirm] = useState(false); // Confirmation modal
+  const [showConfirm, setShowConfirm] = useState(false);
   const navigate = useNavigate();
   const [search, setSearch] = useState("");
-  const token = getLocalStoragedata("token");
   const serviceURL = process.env.REACT_APP_API_URL;
 
   const fetchCart = useCallback(async () => {

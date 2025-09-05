@@ -1,8 +1,10 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import OrdersBg from "../assets/OrderBg.png";
 import { getUserOrdersService } from "../services/orderService";
 import { getLocalStoragedata } from "../helpers/Storage";
+import NavSearchBar from "../Component/N-SearchBar.js";
+import { Spin } from "antd";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 const fmtDate = (iso) => new Date(iso).toLocaleString();
@@ -11,6 +13,7 @@ export default function Orders() {
   const [orders, setOrders] = React.useState([]);
   const [loading, setLoading] = React.useState(true);
   const [error, setError] = React.useState(null);
+  const [search, setSearch] = useState("");
 
   React.useEffect(() => {
     const fetchOrders = async () => {
@@ -30,7 +33,12 @@ export default function Orders() {
   }, []);
 
   if (loading) {
-    return <div className="pt-28 text-center">Loading orders…</div>;
+    return (
+      <div className="pt-28 text-center items-center">
+        {" "}
+        <Spin size="large" />
+      </div>
+    );
   }
 
   if (error) {
@@ -53,6 +61,7 @@ export default function Orders() {
         }}
       />
       <div className="absolute inset-0 -z-10 bg-white/60" />
+      <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
 
       <div className="mx-auto max-w-6xl px-4 pb-24">
         <div className="flex items-end justify-between gap-3 flex-wrap">
@@ -81,7 +90,6 @@ export default function Orders() {
           </div>
         ) : (
           <>
-            {/* Recent Order */}
             <section className="mt-6 rounded-xl border bg-gray-200 p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
@@ -92,28 +100,32 @@ export default function Orders() {
                 </span>
               </div>
 
-              <ul className="mt-4 divide-y divide-slate-200">
-                {recent.items.map((i, idx) => (
-                  <li key={idx} className="py-3 flex items-center gap-3">
-                    {i.image && (
-                      <img
-                        src={i.image}
-                        alt={i.name}
-                        className="w-12 h-12 rounded-lg object-cover ring-1 ring-slate-200"
-                      />
-                    )}
-                    <div className="flex-1">
-                      <div className="font-medium text-slate-900">{i.name}</div>
-                      <div className="text-sm text-slate-600">
-  ${ (i.price ?? 0).toFixed(2) } • Qty {i.quantity ?? 1}
-</div>
-                    </div>
-                    <div className="font-semibold text-emerald-700">
-  {formatCurrency( (i.price ?? 0) * (i.quantity ?? 0) )}
-</div>
-                  </li>
-                ))}
-              </ul>
+              <div className="mt-4 max-h-64 overflow-y-auto pr-4">
+                <ul className="divide-y divide-slate-200">
+                  {recent.items.map((i, idx) => (
+                    <li key={idx} className="py-3 flex items-center gap-3">
+                      {i.image && (
+                        <img
+                          src={i.image}
+                          alt={i.name}
+                          className="w-12 h-12 rounded-lg object-cover ring-1 ring-slate-200"
+                        />
+                      )}
+                      <div className="flex-1">
+                        <div className="font-medium text-slate-900">
+                          {i.name}
+                        </div>
+                        <div className="text-sm text-slate-600">
+                          ${(i.price ?? 0).toFixed(2)} • Qty {i.quantity ?? 1}
+                        </div>
+                      </div>
+                      <div className="font-semibold text-emerald-700">
+                        {formatCurrency((i.price ?? 0) * (i.quantity ?? 0))}
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
 
               <dl className="mt-4 grid grid-cols-2 gap-2 text-sm max-w-sm ml-auto">
                 <div className="flex items-center justify-between">
