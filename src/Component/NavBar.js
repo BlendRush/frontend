@@ -139,7 +139,7 @@ export default function NavBar() {
         {mobileOpen && (
           <div className="mt-2 flex flex-col gap-3 rounded-xl bg-white/90 p-4 shadow-md md:hidden">
             <NavLink
-              to="/home"
+              to="/"
               className={({ isActive }) =>
                 `${base} ${isActive ? active : inactive}`
               }
