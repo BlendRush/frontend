@@ -8,7 +8,7 @@ import ForgotPW from "./Pages/forgot-pw.jsx";
 import Menu from "./Pages/Menu.jsx";
 import Cart from "./Pages/Cart.jsx";
 import Orders from "./Pages/Order.jsx";
-import About from "./Pages/About.jsx"; 
+import About from "./Pages/About.jsx";
 import { AuthContext } from "./context/AuthContext.jsx";
 import ResetPW from "./Pages/reset-pw.jsx";
 
@@ -17,8 +17,8 @@ export default function App() {
 
   return (
     <Routes>
-      <Route path="/" element={<Navigate to="/home" replace />} />
-      <Route path="/home" element={<HomePage />} />
+      {/* <Route path="/" element={<Navigate to="/home" replace />} /> */}
+      <Route path="/" element={<HomePage />} />
       <Route path="/sign-in" element={<SignIn />} />
       <Route path="/register" element={<Register />} />
       <Route path="/forgot-pw" element={<ForgotPW />} />
@@ -33,7 +33,7 @@ export default function App() {
           <Route path="*" element={<div>Not Found</div>} />
         </>
       ) : (
-        <Route path="*" element={<Navigate to="/home" />} />
+        <Route path="*" element={<Navigate to="/" />} />
       )}
     </Routes>
   );

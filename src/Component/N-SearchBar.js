@@ -22,7 +22,7 @@ export default function NavBar({ search = "", onSearchChange }) {
     try {
       openNotification("success", "Logged out successfully");
       localStorage.clear();
-      navigate("/home");
+      navigate("/");
     } catch (error) {
       console.error("Logout error:", error);
       openNotification("warning", "Logout failed. Please try again.");
@@ -34,7 +34,7 @@ export default function NavBar({ search = "", onSearchChange }) {
       <nav className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
         <div className="mt-4 flex items-center justify-between rounded-3xl border border-white/30 bg-white/40 px-5 py-3 backdrop-blur-md shadow-sm">
           {/* Logo -> Home */}
-          <Link to="/home" className="flex items-center gap-2">
+          <Link to="/" className="flex items-center gap-2">
             <span className="inline-grid place-items-center h-9 w-9 rounded-xl bg-emerald-500 text-white font-black">
               bR
             </span>
@@ -47,7 +47,7 @@ export default function NavBar({ search = "", onSearchChange }) {
 
           {/* Center links */}
           <div className="hidden md:flex items-center gap-6">
-            <NavLink to="/home" className={navLink}>
+            <NavLink to="/" className={navLink}>
               <svg
                 className="h-4 w-4 text-emerald-600"
                 viewBox="0 0 24 24"
@@ -110,9 +110,8 @@ export default function NavBar({ search = "", onSearchChange }) {
               <Link
                 to="/cart"
                 className="relative grid place-items-center rounded-xl border border-white/30 bg-white/60 p-2 hover:bg-white/80 transition"
-                aria-label={`Cart${
-                  count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
-                }`}
+                aria-label={`Cart${count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
+                  }`}
               >
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
