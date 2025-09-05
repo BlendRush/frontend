@@ -2,11 +2,13 @@
 import { NavLink, Link, useNavigate } from "react-router-dom";
 import { useNotification } from "../context/NotificationContext";
 import { useCart } from "./CartContext";
+import { getLocalStoragedata } from "../helpers/Storage";
 
 export default function NavBar({ search = "", onSearchChange }) {
   const navigate = useNavigate();
   const { openNotification } = useNotification();
   const { count } = useCart();
+  const token = getLocalStoragedata("token");
   const navLink = ({ isActive }) =>
     [
       "relative inline-flex items-center gap-2 px-3 py-1 rounded-lg",
@@ -104,33 +106,34 @@ export default function NavBar({ search = "", onSearchChange }) {
           {/* Right cluster: Cart (left) + Search (middle) + Logout icon (right) */}
           <div className="flex items-center gap-3">
             {/* Cart (left of search) */}
-            <Link
-              to="/cart"
-              className="relative grid place-items-center rounded-xl border border-white/30 bg-white/60 p-2 hover:bg-white/80 transition"
-              aria-label={`Cart${
-                count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
-              }`}
-            >
-              <svg
-                xmlns="http://www.w3.org/2000/svg"
-                className="h-6 w-6 text-emerald-700"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
+            {token && (
+              <Link
+                to="/cart"
+                className="relative grid place-items-center rounded-xl border border-white/30 bg-white/60 p-2 hover:bg-white/80 transition"
+                aria-label={`Cart${
+                  count ? `, ${count} item${count > 1 ? "s" : ""}` : ""
+                }`}
               >
-                <path d="M6 6h15l-1.5 9h-12z" />
-                <path d="M6 6l-1-3H2" />
-                <circle cx="9" cy="20" r="1.6" />
-                <circle cx="18" cy="20" r="1.6" />
-              </svg>
-              {count > 0 && (
-                <span className="absolute -top-1.5 -right-1.5 grid h-5 min-w-[1.25rem] place-items-center rounded-full bg-emerald-600 px-1.5 text-[11px] font-bold text-white shadow ring-1 ring-white">
-                  {count}
-                </span>
-              )}
-            </Link>
-
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  className="h-6 w-6 text-emerald-700"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.8"
+                >
+                  <path d="M6 6h15l-1.5 9h-12z" />
+                  <path d="M6 6l-1-3H2" />
+                  <circle cx="9" cy="20" r="1.6" />
+                  <circle cx="18" cy="20" r="1.6" />
+                </svg>
+                {count > 0 && (
+                  <span className="absolute -top-1.5 -right-1.5 grid h-5 min-w-[1.25rem] place-items-center rounded-full bg-emerald-600 px-1.5 text-[11px] font-bold text-white shadow ring-1 ring-white">
+                    {count}
+                  </span>
+                )}
+              </Link>
+            )}
             {/* Search (middle) */}
             <div className="hidden md:block w-[340px]">
               <div className="relative">

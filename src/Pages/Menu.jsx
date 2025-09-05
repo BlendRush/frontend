@@ -6,6 +6,7 @@ import { getMenuService } from "../services/MenuService.jsx";
 import { getLocalStoragedata } from "../helpers/Storage.js";
 import { useNotification } from "../context/NotificationContext.jsx";
 import { useCart } from "../Component/CartContext.jsx";
+import NavBar from "../Component/NavBar.js";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 
@@ -21,12 +22,13 @@ export default function MenuPage() {
   const [categories, setCategories] = useState([]);
   const { openNotification } = useNotification();
   const serviceURL = process.env.REACT_APP_API_URL;
+  const token = getLocalStoragedata("token");
   const { fetchCart } = useCart();
 
   useEffect(() => {
     fetchMenuItemData();
     fetchCart();
-  }, []);
+  }, [fetchCart]);
 
   const fetchMenuItemData = async () => {
     setLoading(true);
@@ -142,7 +144,11 @@ export default function MenuPage() {
 
       {/* Main content */}
       <div className="relative">
-        <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
+        {token ? (
+          <NavSearchBar search={search} onSearchChange={(v) => setSearch(v)} />
+        ) : (
+          <NavBar />
+        )}
         <main id="menu" className="mx-auto max-w-6xl px-4 pb-24">
           {/* Hero */}
           <section className="mt-8 rounded-2xl bg-emerald-600/90 text-white p-6 md:p-8 flex flex-col md:flex-row items-center gap-6">
@@ -259,12 +265,14 @@ export default function MenuPage() {
                     </div>
 
                     <div className="mt-3 flex items-center justify-between">
-                      <button
-                        onClick={() => handleAdd(item)}
-                        className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
-                      >
-                        Add
-                      </button>
+                      {token && (
+                        <button
+                          onClick={() => handleAdd(item)}
+                          className="rounded-xl bg-emerald-600 text-white px-4 py-2 text-sm font-medium hover:bg-emerald-700 active:scale-[0.99] transition"
+                        >
+                          Add
+                        </button>
+                      )}
 
                       <details>
                         <summary className="cursor-pointer text-sm text-emerald-700 hover:underline">
