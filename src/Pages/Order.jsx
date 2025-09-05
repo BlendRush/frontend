@@ -1,29 +1,45 @@
-// src/Pages/Orders.jsx
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
-import OrdersBg from "../assets/OrderBg.png"; // <-- your unique orders bg (change path/name if needed)
+import { Link } from "react-router-dom";
+import OrdersBg from "../assets/OrderBg.png";
+import { getUserOrdersService } from "../services/orderService";
+import { getLocalStoragedata } from "../helpers/Storage";
 
-const KEY = "orders:v1";
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 const fmtDate = (iso) => new Date(iso).toLocaleString();
 
 export default function Orders() {
-  const { state } = useLocation();
   const [orders, setOrders] = React.useState([]);
+  const [loading, setLoading] = React.useState(true);
+  const [error, setError] = React.useState(null);
 
   React.useEffect(() => {
-    try {
-      setOrders(JSON.parse(localStorage.getItem(KEY) || "[]"));
-    } catch {
-      setOrders([]);
-    }
+    const fetchOrders = async () => {
+      try {
+        const userID = getLocalStoragedata("userID");
+        console.log("Fetching orders for userID:", userID);
+        const data = await getUserOrdersService(userID);
+        console.log("Fetched Orders:", data);
+        setOrders(data);
+      } catch (err) {
+        setError(err.message);
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchOrders();
   }, []);
 
+  if (loading) {
+    return <div className="pt-28 text-center">Loading orders…</div>;
+  }
+
+  if (error) {
+    return <div className="pt-28 text-center text-red-500">Error: {error}</div>;
+  }
+
   const hasOrders = orders.length > 0;
-  const recent = hasOrders
-    ? (state?.lastOrderId && orders.find((o) => o.id === state.lastOrderId)) || orders[0]
-    : null;
-  const history = hasOrders ? orders.filter((o) => o.id !== recent.id) : [];
+  const recent = hasOrders ? orders[0] : null;
+  const history = hasOrders ? orders.slice(1) : [];
 
   return (
     <div className="min-h-screen pt-28 relative">
@@ -36,10 +52,8 @@ export default function Orders() {
           backgroundPosition: "center",
         }}
       />
-      {/* Soft readability overlay */}
       <div className="absolute inset-0 -z-10 bg-white/60" />
 
-      {/* Page content */}
       <div className="mx-auto max-w-6xl px-4 pb-24">
         <div className="flex items-end justify-between gap-3 flex-wrap">
           <h1 className="text-3xl sm:text-4xl lg:text-5xl font-extrabold tracking-tight bg-gradient-to-r from-emerald-700 to-emerald-500 bg-clip-text text-transparent">
@@ -67,20 +81,20 @@ export default function Orders() {
           </div>
         ) : (
           <>
-            {/* Recent order */}
+            {/* Recent Order */}
             <section className="mt-6 rounded-xl border bg-gray-200 p-5">
               <div className="flex items-center justify-between">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900">
                   Recent Order
                 </h2>
                 <span className="text-sm text-slate-600">
-                  #{recent.id} • {fmtDate(recent.createdAt)}
+                  #{recent.orderID} • {fmtDate(recent.createdAt)}
                 </span>
               </div>
 
               <ul className="mt-4 divide-y divide-slate-200">
-                {recent.items.map((i) => (
-                  <li key={i.id} className="py-3 flex items-center gap-3">
+                {recent.items.map((i, idx) => (
+                  <li key={idx} className="py-3 flex items-center gap-3">
                     {i.image && (
                       <img
                         src={i.image}
@@ -91,12 +105,12 @@ export default function Orders() {
                     <div className="flex-1">
                       <div className="font-medium text-slate-900">{i.name}</div>
                       <div className="text-sm text-slate-600">
-                        ${i.price.toFixed(2)} • Qty {i.qty}
-                      </div>
+  ${ (i.price ?? 0).toFixed(2) } • Qty {i.quantity ?? 1}
+</div>
                     </div>
                     <div className="font-semibold text-emerald-700">
-                      {formatCurrency((i.price || 0) * (i.qty || 0))}
-                    </div>
+  {formatCurrency( (i.price ?? 0) * (i.quantity ?? 0) )}
+</div>
                   </li>
                 ))}
               </ul>
@@ -117,21 +131,17 @@ export default function Orders() {
                 <div className="col-span-2 border-t pt-2 flex items-center justify-between text-base">
                   <dt className="font-bold text-slate-900">Total</dt>
                   <dd className="font-bold text-slate-900">
-                    {formatCurrency(recent.total)}
+                    {formatCurrency(recent.totalAmount)}
                   </dd>
                 </div>
               </dl>
             </section>
 
-            {/* Order history */}
+            {/* Order History */}
             {history.length > 0 && (
               <section className="mt-6">
-                {/* Upgraded font + accent underline */}
                 <div className="space-y-1">
-                  <h3
-                    style={{ fontFamily: "'Poppins', ui-sans-serif, system-ui" }} // <- custom font
-                    className="text-2xl font-extrabold tracking-tight text-slate-900"
-                  >
+                  <h3 className="text-2xl font-extrabold tracking-tight text-slate-900">
                     Order History
                   </h3>
                   <div className="h-1 w-24 rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400"></div>
@@ -139,31 +149,31 @@ export default function Orders() {
 
                 <div className="mt-3 rounded-xl border bg-gray-200 divide-y divide-slate-200">
                   {history.map((o) => (
-                    <details key={o.id} className="group p-4">
+                    <details key={o._id} className="group p-4">
                       <summary className="flex items-center justify-between cursor-pointer">
                         <div>
                           <span className="font-medium text-slate-900">
-                            #{o.id}
+                            #{o.orderID}
                           </span>
                           <span className="ml-2 text-sm text-slate-600">
                             {fmtDate(o.createdAt)}
                           </span>
                         </div>
                         <div className="text-sm font-semibold text-emerald-700">
-                          {formatCurrency(o.total)}
+                          {formatCurrency(o.totalAmount)}
                         </div>
                       </summary>
                       <ul className="mt-3 pl-1 space-y-2">
-                        {o.items.map((i) => (
+                        {o.items.map((i, idx) => (
                           <li
-                            key={i.id}
+                            key={idx}
                             className="flex items-center justify-between text-sm"
                           >
                             <span className="text-slate-700">
-                              {i.name} × {i.qty}
+                              {i.name} × {i.quantity}
                             </span>
                             <span className="text-slate-900">
-                              {formatCurrency(i.price * i.qty)}
+                              {formatCurrency(i.price * i.quantity)}
                             </span>
                           </li>
                         ))}

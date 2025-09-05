@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import BgImg from "../assets/CartBg.png";
 import { getLocalStoragedata } from "../helpers/Storage.js"; 
+import { placeOrderService } from "../services/orderService";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 const DELIVERY_FEE = 1;
@@ -10,6 +11,7 @@ const TAX_RATE = 0;
 export default function Cart() {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false); // Confirmation modal
   const navigate = useNavigate();
   const serviceURL = process.env.REACT_APP_API_URL;
 
@@ -34,9 +36,7 @@ export default function Cart() {
   }, []);
 
   // Update quantity
-  const setQty = async (itemId, quantity
-
-) => {
+  const setQty = async (itemId, quantity) => {
     try {
       const token = getLocalStoragedata("token");
       await fetch(`${serviceURL}carts/cart-items/${itemId}`, {
@@ -45,14 +45,10 @@ export default function Cart() {
           "Content-Type": "application/json",
           Authorization: `Bearer ${token}`,
         },
-        body: JSON.stringify({ quantity: quantity
-
- }),
+        body: JSON.stringify({ quantity }),
       });
       setItems((prev) =>
-        prev.map((i) => (i.itemId === itemId ? { ...i, quantity
-
- } : i))
+        prev.map((i) => (i.itemId === itemId ? { ...i, quantity } : i))
       );
     } catch (error) {
       console.error(error);
@@ -91,51 +87,53 @@ export default function Cart() {
   const placeOrder = async () => {
     if (!items.length) return;
 
-    const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
-
- || 1), 0);
+    const subtotal = items.reduce(
+      (sum, i) => sum + (Number(i.price) || 0) * (Number(i.quantity) || 1),
+      0
+    );
     const tax = subtotal * TAX_RATE;
-    const total = subtotal + DELIVERY_FEE + tax;
+    const totalAmount = subtotal + DELIVERY_FEE + tax;
+
+    const sanitizedItems = items.map((i) => ({
+      itemId: Number(i.itemId),
+      name: i.name,
+      price: Number(i.price),
+      quantity: Number(i.quantity),
+      image: i.image || "",
+    }));
 
     try {
-      const token = getLocalStoragedata("token");
-      const res = await fetch(`${serviceURL}orders`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          items,
-          subtotal,
-          delivery: DELIVERY_FEE,
-          tax,
-          total,
-        }),
-      });
+      const userID = getLocalStoragedata("userID");
 
-      if (!res.ok) throw new Error("Failed to place order");
+      const orderData = {
+        userID,
+        items: sanitizedItems,
+        subtotal,
+        delivery: 1,
+        tax,
+        totalAmount,
+      };
 
-      setItems([]); // clear cart
-      navigate("/orders"); // navigate to orders page
+      console.log("orderData", orderData);
+      const res = await placeOrderService(orderData);
+      console.log("Order Response:", res);
+
+      setItems([]);
+      clearCart();
+      navigate("/orders");
     } catch (error) {
-      console.error(error);
+      console.error("Place order failed:", error.message);
     }
   };
 
-  const count = items.reduce((sum, i) => sum + (i.quantity
-
- || 1), 0);
-  const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity
-
- || 1), 0);
+  const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
+  const subtotal = items.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
   const tax = subtotal * TAX_RATE;
   const total = subtotal + DELIVERY_FEE + tax;
 
-  console.log(items)
-
   return (
     <div className="min-h-screen pt-28 relative">
+      {/* Background */}
       <div
         className="absolute inset-0 -z-10"
         style={{
@@ -169,6 +167,7 @@ export default function Cart() {
           </div>
         ) : (
           <div className="mt-6 grid grid-cols-1 lg:grid-cols-3 gap-6">
+            {/* Cart Items */}
             <div className="lg:col-span-2">
               <ul className="divide-y divide-slate-200 rounded-xl border bg-white">
                 {items.map((i) => (
@@ -185,27 +184,21 @@ export default function Cart() {
                           <div className="text-sm text-slate-600">{formatCurrency(i.price)} each</div>
                         </div>
                         <div className="text-right font-semibold text-emerald-700">
-                          {formatCurrency((i.price || 0) * (i.quantity
-
- || 0))}
+                          {formatCurrency((i.price || 0) * (i.quantity || 0))}
                         </div>
                       </div>
 
                       <div className="mt-3 flex items-center gap-2">
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.itemId, Math.max(1, (i.quantity
-
- || 0) - 1))}
+                          onClick={() => setQty(i.itemId, Math.max(1, (i.quantity || 0) - 1))}
                         >
                           −
                         </button>
                         <input
                           type="number"
                           min={1}
-                          value={i.quantity
-
-}
+                          value={i.quantity}
                           onChange={(e) => {
                             const v = parseInt(e.target.value, 10);
                             setQty(i.id, Number.isNaN(v) || v < 1 ? 1 : v);
@@ -214,9 +207,7 @@ export default function Cart() {
                         />
                         <button
                           className="h-8 w-8 grid place-items-center rounded-lg border hover:bg-slate-50"
-                          onClick={() => setQty(i.itemId, (i.quantity
-
- || 0) + 1)}
+                          onClick={() => setQty(i.itemId, (i.quantity || 0) + 1)}
                         >
                           +
                         </button>
@@ -248,6 +239,7 @@ export default function Cart() {
               </div>
             </div>
 
+            {/* Order Summary */}
             <aside className="lg:col-span-1">
               <div className="rounded-xl border bg-gray-100 p-5">
                 <h2 className="text-xl sm:text-2xl font-extrabold tracking-tight text-slate-900 flex items-center gap-2">
@@ -271,7 +263,7 @@ export default function Cart() {
 
                 <button
                   className="mt-5 w-full rounded-lg bg-emerald-600 py-2.5 text-white font-medium hover:bg-emerald-700"
-                  onClick={placeOrder}
+                  onClick={() => setShowConfirm(true)}
                 >
                   Place Order
                 </button>
@@ -280,6 +272,33 @@ export default function Cart() {
                 </p>
               </div>
             </aside>
+          </div>
+        )}
+
+        {/* Confirmation Modal */}
+        {showConfirm && (
+          <div className="fixed inset-0 flex items-center justify-center bg-black/50 z-50">
+            <div className="bg-white rounded-xl p-6 max-w-sm w-full text-center">
+              <h2 className="text-lg font-bold mb-4">Confirm Your Order</h2>
+              <p className="mb-6">Are you sure you want to place this order?</p>
+              <div className="flex justify-between gap-4">
+                <button
+                  className="flex-1 rounded-lg bg-gray-300 py-2 font-medium hover:bg-gray-400"
+                  onClick={() => setShowConfirm(false)}
+                >
+                  Cancel
+                </button>
+                <button
+                  className="flex-1 rounded-lg bg-emerald-600 py-2 text-white font-medium hover:bg-emerald-700"
+                  onClick={() => {
+                    placeOrder();
+                    setShowConfirm(false);
+                  }}
+                >
+                  Confirm
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>
