@@ -26,7 +26,7 @@ const ForgotPW = () => {
       );
       openNotification("success", "Reset Link Send successfully", response.data.message);
       message.success(response.data.message, 5);
-      navigate("/login");
+      navigate("/sign-in");
       setIsSubmitted(true);
       setIsButtonDisabled(true);
       form.resetFields();
