@@ -36,7 +36,6 @@ export default function Register() {
         }
       }, 0);
     }
-    
   }, [modalVisible, form]);
 
   const handleScroll = () => {
@@ -63,6 +62,7 @@ export default function Register() {
         setToken(response?.token);
         setLocalStorageData("token", response?.token);
         setLocalStorageData("user", response?.email);
+        setLocalStorageData("userID", response.userID);
         navigate("/menu", { replace: true });
       } else {
         openNotification(
@@ -106,9 +106,7 @@ export default function Register() {
           </div>
         </Button>
       </div>
-      <div
-        className="p-6 w-[600px] max-w-[90vw] lg:-mt-14 xl:h-[400px] xl:-mt-16 bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur"
-      >
+      <div className="p-6 w-[600px] max-w-[90vw] lg:-mt-14 xl:h-[400px] xl:-mt-16 bg-white/0 rounded-2xl shadow-xl ring-1 ring-black/5 backdrop-blur">
         <div className="flex flex-col items-center w-full">
           <Text
             className="text-black text-2xl xl:text-3xl font-extrabold"
@@ -269,4 +267,4 @@ export default function Register() {
       </Modal>
     </div>
   );
-}  
+}
