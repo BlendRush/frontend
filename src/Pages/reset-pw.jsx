@@ -39,7 +39,7 @@ const ResetPW = () => {
       setIsButtonDisabled(true);
       form.resetFields();
     } catch (err) {
-      openNotification("success", "Reset successful", res.data.message);
+      openNotification("success", "Reset successful");
     } finally {
       setIsLoading(false);
     }
