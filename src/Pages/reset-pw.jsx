@@ -39,13 +39,7 @@ const ResetPW = () => {
       setIsButtonDisabled(true);
       form.resetFields();
     } catch (err) {
-      const errorMsg = err.response?.data?.message || "Something went wrong";
-
-      openNotification(
-        "error",
-        "Unable to reset your password",
-        errorMsg || "Something went wrong. Please try again."
-      );
+      openNotification("success", "Reset successful", res.data.message);
     } finally {
       setIsLoading(false);
     }
