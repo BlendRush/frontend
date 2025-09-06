@@ -6,6 +6,7 @@ import { Spin } from "antd";
 import NavSearchBar from "../Component/N-SearchBar.js";
 import { placeOrderService } from "../services/orderService";
 import { useNotification } from "../context/NotificationContext.jsx";
+import { useCart } from "../Component/CartContext.jsx";
 
 const formatCurrency = (n) => `$${n.toFixed(2)}`;
 const DELIVERY_FEE = 1;
@@ -19,7 +20,8 @@ export default function Cart() {
   const [search, setSearch] = useState("");
   const serviceURL = process.env.REACT_APP_API_URL;
   const { openNotification } = useNotification();
-
+  const { clearCart } = useCart();
+  
   const fetchCart = useCallback(async () => {
     setLoading(true);
     try {
@@ -74,20 +76,6 @@ export default function Cart() {
     }
   };
 
-  // Clear cart
-  const clearCart = async () => {
-    try {
-      const token = getLocalStoragedata("token");
-      await fetch(`${serviceURL}carts/cart-items/`, {
-        method: "DELETE",
-        headers: { Authorization: `Bearer ${token}` },
-      });
-      setItems([]);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   // Place order
   const placeOrder = async () => {
     if (!items.length) return;
@@ -117,7 +105,7 @@ export default function Cart() {
         delivery: 1,
         tax,
         totalAmount,
-        email
+        email,
       };
 
       console.log("orderData", orderData);

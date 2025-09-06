@@ -1,4 +1,10 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from "react";
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
 import { getLocalStoragedata } from "../helpers/Storage";
 
 const CartContext = createContext();
@@ -24,10 +30,22 @@ export function CartProvider({ children }) {
     fetchCart();
   }, [fetchCart]);
 
+  const clearCart = useCallback(async () => {
+    try {
+      const res = await fetch(`${serviceURL}carts/cart-items/`, {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (res.ok) setItems([]);
+    } catch (err) {
+      console.error(err);
+    }
+  }, [serviceURL, token]);
+
   const count = items.reduce((sum, i) => sum + (i.quantity || 1), 0);
 
   return (
-    <CartContext.Provider value={{ items, setItems, count, fetchCart }}>
+    <CartContext.Provider value={{ items, setItems, count, fetchCart,clearCart }}>
       {children}
     </CartContext.Provider>
   );
